@@ -165,5 +165,121 @@ void BinaryTreeOperations<T>::traversePostOrderTraversal(void (*process)(T))
 
 }
 
+template<class T>
+long BinaryTreeOperations<T>::heightDFS()
+{
+    #ifdef DEBUG
+    long counter =0;
+    #endif // DEBUG
+/*
+ heightDFS(root)
+ {
+   if(root==null)
+    return -1;
+
+    l=height(root->left);
+    r=height(root->right);
+
+    if(l>r)
+      return(l+1);
+    else
+       return(r+1);
+ }
+*/
+
+    struct Snapshot
+    {
+        //Arguments to function
+        T root;
+        //Local Variables
+        long leftHeight, rightHeight;
+        //stage
+        int stage;
+    };
+
+    long returnVal = -1; //Default Return Value
+
+    Snapshot snapshot;
+
+    snapshot.root = this->root;
+    snapshot.leftHeight=snapshot.rightHeight=-1;
+    snapshot.stage=0;
+
+    std::stack<Snapshot>s;
+    s.push(snapshot);
+
+    while(!s.empty())
+    {
+        #ifdef DEBUG
+        counter++;
+        #endif // DEBUG
+
+        snapshot=s.top(); s.pop();
+
+        switch(snapshot.stage)
+        {
+            case 0:
+            {
+                if(snapshot.root==nullptr)
+                {
+                    returnVal=-1;
+                    continue;
+                }
+
+                snapshot.stage=1;
+                s.push(snapshot);
+
+                if(snapshot.root->left != nullptr)
+                {
+                    snapshot.root= snapshot.root->left;
+                    snapshot.leftHeight=snapshot.rightHeight=-1;
+                    snapshot.stage=0;
+                    s.push(snapshot);
+                }
+                else
+                    returnVal=-1;
+
+                continue;
+            }
+
+            case 1:
+            {
+                snapshot.leftHeight = returnVal;
+                snapshot.stage=2;
+                s.push(snapshot);
+
+                if(snapshot.root->right != nullptr)
+                {
+                    snapshot.root = snapshot.root->right;
+                    snapshot.leftHeight=snapshot.rightHeight=-1;
+                    snapshot.stage=0;
+                    s.push(snapshot);
+                }
+                else
+                    returnVal=-1;
+
+                continue;
+            }
+
+            case 2:
+            {
+                snapshot.rightHeight=returnVal;
+
+                if(snapshot.leftHeight>snapshot.rightHeight)
+                    returnVal=snapshot.leftHeight+1;
+                else
+                    returnVal=snapshot.rightHeight+1;
+                continue;
+            }
+
+        }
+
+    }
+
+    #ifdef DEBUG
+    std::cout<<std::endl<<"Loop Count of Height of Tree :: "<<counter<<std::endl;
+    #endif // DEBUG
+    return returnVal;
+}
 
 #endif

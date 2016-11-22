@@ -34,6 +34,7 @@ class BinaryTreeOperations:public BinaryTree<T>
         //MemberFunction
         void traverseLevelOrder(void (*process)(T));
         void traversePostOrderTraversal(void (*process)(T));
+        long heightDFS();
 
 
     protected:
