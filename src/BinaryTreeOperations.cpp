@@ -282,4 +282,132 @@ long BinaryTreeOperations<T>::heightDFS()
     return returnVal;
 }
 
+static long Max(long x, long y)
+{
+    return(x^((x^y)&-(x<y)));
+}
+
+template <class T>
+long BinaryTreeOperations<T>::diameter()
+{
+    #ifdef DEBUG
+    long counter = 0;
+    #endif // DEBUG
+    /**
+    long diameter(root)
+    {
+        if(root == null)
+            return 0;
+
+        long leftHeight=heightDFS(root->left);
+        long rightHeight=heightDFS(root->right);
+
+        long leftDiameter=diameter(root->left);
+        long rightDiameter=diameter(root->right);
+
+        return MAX(leftHeight+rightHeight,Max(leftDiameter,rightDiameter));
+    }
+    */
+
+    struct Snapshot
+    {
+        //function argument
+        T root;
+        //local variable
+        long leftHeight,rightHeight,leftDiameter,rightDiameter;
+        //stage
+        long stage;
+    };
+
+    long returnVal;
+
+    Snapshot snapshot;
+
+    snapshot.root = this->root;
+    snapshot.leftHeight=snapshot.rightHeight=snapshot.leftDiameter=snapshot.rightDiameter=-1;
+    snapshot.stage=0;
+
+    std::stack<Snapshot> s;
+
+    s.push(snapshot);
+    T temp = this->root;
+    while(!s.empty())
+    {
+        #ifdef DEBUG
+        counter++;
+        #endif // DEBUG
+
+        snapshot = s.top(); s.pop();
+
+        switch(snapshot.stage)
+        {
+            case 0:
+            {
+                if(snapshot.root == nullptr)
+                {
+                    returnVal=-1;
+                    continue;
+                }
+
+                this->root=snapshot.root->left;
+                snapshot.leftHeight = this->heightDFS();
+                this->root=snapshot.root->right;
+                snapshot.rightHeight = this->heightDFS();
+
+                snapshot.stage=1;
+                s.push(snapshot);
+
+                if(snapshot.root->left != nullptr)
+                {
+                    snapshot.root = snapshot.root->left;
+                    snapshot.leftHeight=snapshot.rightHeight=snapshot.leftDiameter=snapshot.rightDiameter=-1;
+                    snapshot.stage=0;
+                    s.push(snapshot);
+                }
+                else
+                    returnVal=-1;
+
+                continue;
+            }
+
+            case 1:
+            {
+                snapshot.leftDiameter=returnVal;
+                snapshot.stage=2;
+                s.push(snapshot);
+
+                if(snapshot.root->right != nullptr)
+                {
+                    snapshot.root = snapshot.root->right;
+                    snapshot.leftHeight=snapshot.rightHeight=snapshot.leftDiameter=snapshot.rightDiameter=-1;
+                    snapshot.stage=0;
+                    s.push(snapshot);
+                }
+                else
+                    returnVal=-1;
+
+                continue;
+            }
+
+            case 2:
+            {
+                snapshot.rightDiameter=returnVal;
+//                 #ifdef DEBUG
+//                    std::cout<<"\n snapshot.leftHeight = "<<snapshot.leftHeight<<std::endl;
+//                    std::cout<<"\n snapshot.rightHeight = "<<snapshot.rightHeight<<std::endl;
+//                 #endif // DEBUG
+                returnVal = Max(snapshot.leftHeight+snapshot.rightHeight+1,Max(snapshot.leftDiameter,snapshot.rightDiameter));
+                continue;
+            }
+
+        }
+    }
+
+    this->root=temp;
+    #ifdef DEBUG
+    std::cout<<"\nNumber of Loops for diameter :: "<<counter<<std::endl;
+    #endif // DEBUG
+
+    return returnVal;
+}
 #endif
