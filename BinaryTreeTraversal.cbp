@@ -46,6 +46,9 @@
 			<Add directory="../BinaryTreeConstruction/include" />
 			<Add directory="../BinaryTreeConstruction/src" />
 		</Compiler>
+		<Linker>
+			<Add library="psapi" />
+		</Linker>
 		<Unit filename="include/BinaryTreeOperations.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/BinaryTreeOperations.cpp" />

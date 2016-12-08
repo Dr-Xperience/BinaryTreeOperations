@@ -3,3 +3,6 @@
 *.exe
 *.depend
 *.layout
+bin/Release/libgcc_s_dw2-1.dll
+bin/Release/libstdc++-6.dll
+bin/Release/libwinpthread-1.dll

@@ -38,7 +38,14 @@ BinaryTreeOperations<T>::BinaryTreeOperations():BinaryTree<T>()
 }
 
 template<class T>
-BinaryTreeOperations<T>::BinaryTreeOperations(T root1):BinaryTree<T>(root1)
+BinaryTreeOperations<T>::BinaryTreeOperations(T data):BinaryTree<T>(data)
+{
+    //ctor
+}
+
+//Copy Constructor
+template<class T>
+BinaryTreeOperations<T>::BinaryTreeOperations(BinaryTreeOperations& b):BinaryTree<T>(b)
 {
     //ctor
 }
@@ -53,9 +60,10 @@ BinaryTreeOperations<T>::~BinaryTreeOperations()
 template<class T>
 void BinaryTreeOperations<T>::traverseLevelOrder(void (*process)(T))
 {
-    T root = this->root;
+    typedef typename BinaryTree<T>::Node Node;
+    Node* root = this->root;
 
-    std::queue<T> q;
+    std::queue<Node*> q;
     q.push(root);
 
     #ifdef DEBUG
@@ -69,7 +77,7 @@ void BinaryTreeOperations<T>::traverseLevelOrder(void (*process)(T))
         #endif // DEBUG
 
         root=q.front();q.pop();
-        process(root);
+        process(root->data);
 
         if(root->left != nullptr)
         {
@@ -88,14 +96,65 @@ void BinaryTreeOperations<T>::traverseLevelOrder(void (*process)(T))
 }
 
 template<class T>
+void BinaryTreeOperations<T>::preOrderRec(void (*process)(T),typename BinaryTree<T>::Node * root)
+{
+    if(root == nullptr)
+        return;
+    process(root->data);
+    preOrderRec(process,root->left);
+    preOrderRec(process,root->right);
+}
+
+template<class T>
+void BinaryTreeOperations<T>::recurssionPreOrder(void (*process)(T))
+{
+    preOrderRec(process,this->root);
+}
+
+template<class T>
+void BinaryTreeOperations<T>::traversePreOrderTraversal(void (*process)(T))
+{
+    #ifdef DEBUG
+    long counter=0;
+    #endif // DEBUG
+
+    typedef typename BinaryTree<T>::Node Node;
+    Node * root = this->root;
+
+    std::stack<Node*> s;
+    s.push(root);
+
+    while(!s.empty())
+    {
+        root= s.top(); s.pop();
+        for(;root != nullptr;root=root->left)
+        {
+            #ifdef DEBUG
+            counter++;
+            #endif // DEBUG
+
+            process(root->data);
+
+            if(root->right != nullptr)
+                s.push(root->right);
+        }
+    }
+
+    #ifdef DEBUG
+    std::cout<<std::endl<<"Pre-Order Traversal loop count :: "<<counter<<std::endl;
+    #endif
+}
+template<class T>
 void BinaryTreeOperations<T>::traversePostOrderTraversal(void (*process)(T))
 {
     #ifdef DEBUG
     long counter =0;
     #endif //DEBUG
+
+    typedef typename BinaryTree<T>::Node Node;
     struct Snapshot
     {
-        T root; //argument of Member Function
+        Node* root; //argument of Member Function
         //No memberFunctions Present
         long stage;
     };
@@ -151,7 +210,7 @@ void BinaryTreeOperations<T>::traversePostOrderTraversal(void (*process)(T))
             }
             case 2:
             {
-                process(snapshot.root);
+                process(snapshot.root->data);
                 continue;
             }
 
@@ -186,11 +245,12 @@ long BinaryTreeOperations<T>::heightDFS()
        return(r+1);
  }
 */
+    typedef typename BinaryTree<T>::Node Node;
 
     struct Snapshot
     {
         //Arguments to function
-        T root;
+        Node* root;
         //Local Variables
         long leftHeight, rightHeight;
         //stage
@@ -309,10 +369,12 @@ long BinaryTreeOperations<T>::diameter()
     }
     */
 
+    typedef typename BinaryTree<T>::Node Node;
+
     struct Snapshot
     {
         //function argument
-        T root;
+        Node* root;
         //local variable
         long leftHeight,rightHeight,leftDiameter,rightDiameter;
         //stage
@@ -330,7 +392,7 @@ long BinaryTreeOperations<T>::diameter()
     std::stack<Snapshot> s;
 
     s.push(snapshot);
-    T temp = this->root;
+    Node* temp = this->root;
     while(!s.empty())
     {
         #ifdef DEBUG

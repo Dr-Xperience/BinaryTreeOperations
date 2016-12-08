@@ -18,10 +18,173 @@
 *****************************************************************************/
 #include <iostream>
 #include <string>
+#include <algorithm>
 #include "BinaryTreeOperations.h"
 #include "BinaryTreeOperations.cpp"
+
+#include <windows.h>
+#include <psapi.h>
+#include <tchar.h>
 using namespace std;
 
+/** Total code re-base on updated BinaryTree Class
+**/
+
+void process(std::string);
+std::string process(long id,bool& skip, bool& cont);
+std::string interactive(long id,bool& skip, bool& cont);
+
+long static HISTORYPRIVATE = 0;
+long static HISTORYWORKING = 0;
+void process(long data)
+{
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+    ZeroMemory(&pmc, sizeof(PROCESS_MEMORY_COUNTERS_EX));
+    GetProcessMemoryInfo(GetCurrentProcess(),(PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+//  std::cout<<data<<" ";
+    if (pmc.PrivateUsage>HISTORYPRIVATE)
+        HISTORYPRIVATE=pmc.PrivateUsage;
+    if (pmc.WorkingSetSize>HISTORYWORKING)
+        HISTORYWORKING=pmc.WorkingSetSize;
+}
+
+int main()
+{
+    cout << "Hello world!" << endl;
+
+//long a[1024][100];
+//long* ap = new long[1024];
+
+
+//    BinaryTreeOperations<std::string> b("1");
+//
+//    for(int i=2; i<=500000; ++i)
+//    {
+//        b.insert(std::to_string(i));
+////        std::cout<<" i = "<<i<<std::endl;
+//    }
+    long N = 10000000;
+    BinaryTreeOperations<long> b;
+    b.createN(N);
+
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+    ZeroMemory(&pmc, sizeof(PROCESS_MEMORY_COUNTERS_EX));
+    GetProcessMemoryInfo(GetCurrentProcess(),(PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+    SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
+    SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
+
+    std::cout<<"Number of Nodes :: "<<N<<std::endl;
+    std::cout<<"\nVirtual Memory Used by Process after tree Creation (KB):: "<<static_cast<float>(virtualMemUsedByMe)/1024<<std::endl;
+    std::cout<<"Physical Memory Used by Process after tree Creation (KB):: "<<static_cast<float>(physMemUsedByMe)/1024<<std::endl;
+
+
+    HISTORYPRIVATE=HISTORYWORKING=0;
+    std::cout<<std::endl<<"Recursive Pre-Order Traversal :: ";
+    b.recurssionPreOrder(process);
+    std::cout<<"\nMaximum Virtual Memory Used by Process  (KB):: "<<static_cast<float>(HISTORYPRIVATE)/1024<<std::endl;
+    std::cout<<"Maximum Physical Memory Used by Process (KB):: "<<static_cast<float>(HISTORYWORKING)/1024<<std::endl;
+
+    HISTORYPRIVATE=HISTORYWORKING=0;
+    std::cout<<std::endl<<"\nIterative Pre-Order Traversal :: ";
+    b.traversePreOrderTraversal(process);
+    std::cout<<"\nMaximum Virtual Memory Used by Process  (KB):: "<<static_cast<float>(HISTORYPRIVATE)/1024<<std::endl;
+    std::cout<<"Maximum Physical Memory Used by Process (KB):: "<<static_cast<float>(HISTORYWORKING)/1024<<std::endl;
+
+    HISTORYPRIVATE=HISTORYWORKING=0;
+    std::cout<<std::endl<<"\nIterative with \"manual stack\" Pre-Order Traversal :: ";
+    b.traversePostOrderTraversal(process);
+    std::cout<<"\nMaximum Virtual Memory Used by Process  (KB):: "<<static_cast<float>(HISTORYPRIVATE)/1024<<std::endl;
+    std::cout<<"Maximum Physical Memory Used by Process (KB):: "<<static_cast<float>(HISTORYWORKING)/1024<<std::endl;
+
+
+    /**
+        std::cout<<std::endl<<"Level Order Traversal :: ";
+        b.traverseLevelOrder(process);
+
+        std::cout<<std::endl<<"Post Order Traversal :: ";
+        b.traversePostOrderTraversal(process);
+
+        std::cout<<std::endl<<"Height of Tree :: "<<b.heightDFS()<<std::endl;
+
+        std::cout<<std::endl<<"Diameter of Tree :: "<<b.diameter()<<std::endl;
+    **/
+//    /** Creating tree for checking Diameter of Tree which doesn't pass through root
+//     Tree be like of form
+//
+//           1
+//          / \
+//         2   3
+//        / \
+//       4   5
+//      /   /
+//     8   6
+//          \
+//           7
+//    Diameter will be 4,2,5,6 or 8-4-2-5-6-7
+//    **/
+//
+//
+//    BinaryTreeOperations<std::string> b1;
+
+//    b1.insertInteractive(interactive);
+//
+//    std::cout<<std::endl<<"Level Order Traversal :: ";
+//    b1.traverseLevelOrder(process);
+//    std::cout<<std::endl<<"Diameter of Tree :: "<<b1.diameter()<<std::endl;
+
+//    PROCESS_MEMORY_COUNTERS_EX pmc;
+//    GetProcessMemoryInfo(GetCurrentProcess(),(PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+//    SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
+//    SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
+//
+//    std::cout<<"\nVirtual Memory Used by Process  (MB):: "<<static_cast<float>(virtualMemUsedByMe)/1024/1024<<std::endl;
+//    std::cout<<"Physical Memory Used by Process (MB):: "<<static_cast<float>(physMemUsedByMe)/1024/1024<<std::endl;
+
+    return 0;
+}
+
+std::string interactive(long id,bool& skip, bool& cont)
+{
+    std::string data,yes,yesSkip;
+    std::cout<<std::endl<<"Do you wish to skip node id "<<id<<" (y/n) ::";
+    std::cin>>yesSkip;
+
+    std::transform(yesSkip.cbegin(),yesSkip.cend(),yesSkip.begin(),::tolower);
+
+    if(yesSkip.compare("y")==0 || yesSkip.compare("yes")==0)
+        skip = true;
+    else if(yesSkip.compare("n")==0 || yesSkip.compare("no")==0)
+        skip = false;
+
+    if(skip == false)
+    {
+        std::cout<<std::endl<<"Enter data at node id "<<id<<" :: ";
+        std::cin>>data;
+    }
+
+    std::cout<<std::endl<<"Do you wish enter more (y/n) :: ";
+    std::cin>>yes;
+
+    std::transform(yes.cbegin(),yes.cend(),yes.begin(),::tolower);
+
+    if(yes.compare("y")==0 || yes.compare("yes")==0)
+        cont = true;
+    else if(yes.compare("n")==0 || yes.compare("no")==0)
+        cont = false;
+
+    return data;
+}
+
+void process(std::string data)
+{
+    std::cout<<data<<" ";
+}
+
+std::string process(long id,bool& skip,bool& cont)
+{
+    return "";
+}
+/** Old Code
 struct Node
 {
     std::string data;
@@ -72,7 +235,7 @@ int main()
            7
     Diameter will be 4,2,5,6 or 8-4-2-5-6-7
     **/
-
+/**
     Node *temp, *temp1;
 
     root=new Node;
@@ -137,3 +300,5 @@ void process(Node* root)
 {
     std::cout<<root->data<<" ";
 }
+
+**/

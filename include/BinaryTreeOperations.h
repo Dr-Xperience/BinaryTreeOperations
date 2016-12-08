@@ -29,17 +29,20 @@ class BinaryTreeOperations:public BinaryTree<T>
         //Constructors
         BinaryTreeOperations();
         BinaryTreeOperations(T);
+        BinaryTreeOperations(BinaryTreeOperations&);
         virtual ~BinaryTreeOperations();
 
         //MemberFunction
+        void recurssionPreOrder(void (*process)(T));
         void traverseLevelOrder(void (*process)(T));
+        void traversePreOrderTraversal(void (*process)(T));
         void traversePostOrderTraversal(void (*process)(T));
         long heightDFS();
         long diameter();
 
 
     protected:
-
+        void preOrderRec(void (*process)(T),typename BinaryTree<T>::Node * node);
     private:
 //        T BinaryTreeRoot;
 };
