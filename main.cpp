@@ -32,26 +32,20 @@ using namespace std;
 
 void process(std::string);
 std::string process(long id,bool& skip, bool& cont);
+void process(long);
 std::string interactive(long id,bool& skip, bool& cont);
-
+void MemoryBenchmark();
+void MemoryBenchmarkWithInsert();
 long static HISTORYPRIVATE = 0;
 long static HISTORYWORKING = 0;
-void process(long data)
-{
-    PROCESS_MEMORY_COUNTERS_EX pmc;
-    ZeroMemory(&pmc, sizeof(PROCESS_MEMORY_COUNTERS_EX));
-    GetProcessMemoryInfo(GetCurrentProcess(),(PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
-//  std::cout<<data<<" ";
-    if (pmc.PrivateUsage>HISTORYPRIVATE)
-        HISTORYPRIVATE=pmc.PrivateUsage;
-    if (pmc.WorkingSetSize>HISTORYWORKING)
-        HISTORYWORKING=pmc.WorkingSetSize;
-}
+
 
 int main()
 {
     cout << "Hello world!" << endl;
 
+//    MemoryBenchmark();
+    MemoryBenchmarkWithInsert();
 //long a[1024][100];
 //long* ap = new long[1024];
 
@@ -63,38 +57,6 @@ int main()
 //        b.insert(std::to_string(i));
 ////        std::cout<<" i = "<<i<<std::endl;
 //    }
-    long N = 10000000;
-    BinaryTreeOperations<long> b;
-    b.createN(N);
-
-    PROCESS_MEMORY_COUNTERS_EX pmc;
-    ZeroMemory(&pmc, sizeof(PROCESS_MEMORY_COUNTERS_EX));
-    GetProcessMemoryInfo(GetCurrentProcess(),(PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
-    SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
-    SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
-
-    std::cout<<"Number of Nodes :: "<<N<<std::endl;
-    std::cout<<"\nVirtual Memory Used by Process after tree Creation (KB):: "<<static_cast<float>(virtualMemUsedByMe)/1024<<std::endl;
-    std::cout<<"Physical Memory Used by Process after tree Creation (KB):: "<<static_cast<float>(physMemUsedByMe)/1024<<std::endl;
-
-
-    HISTORYPRIVATE=HISTORYWORKING=0;
-    std::cout<<std::endl<<"Recursive Pre-Order Traversal :: ";
-    b.recurssionPreOrder(process);
-    std::cout<<"\nMaximum Virtual Memory Used by Process  (KB):: "<<static_cast<float>(HISTORYPRIVATE)/1024<<std::endl;
-    std::cout<<"Maximum Physical Memory Used by Process (KB):: "<<static_cast<float>(HISTORYWORKING)/1024<<std::endl;
-
-    HISTORYPRIVATE=HISTORYWORKING=0;
-    std::cout<<std::endl<<"\nIterative Pre-Order Traversal :: ";
-    b.traversePreOrderTraversal(process);
-    std::cout<<"\nMaximum Virtual Memory Used by Process  (KB):: "<<static_cast<float>(HISTORYPRIVATE)/1024<<std::endl;
-    std::cout<<"Maximum Physical Memory Used by Process (KB):: "<<static_cast<float>(HISTORYWORKING)/1024<<std::endl;
-
-    HISTORYPRIVATE=HISTORYWORKING=0;
-    std::cout<<std::endl<<"\nIterative with \"manual stack\" Pre-Order Traversal :: ";
-    b.traversePostOrderTraversal(process);
-    std::cout<<"\nMaximum Virtual Memory Used by Process  (KB):: "<<static_cast<float>(HISTORYPRIVATE)/1024<<std::endl;
-    std::cout<<"Maximum Physical Memory Used by Process (KB):: "<<static_cast<float>(HISTORYWORKING)/1024<<std::endl;
 
 
     /**
@@ -132,13 +94,13 @@ int main()
 //    b1.traverseLevelOrder(process);
 //    std::cout<<std::endl<<"Diameter of Tree :: "<<b1.diameter()<<std::endl;
 
-//    PROCESS_MEMORY_COUNTERS_EX pmc;
-//    GetProcessMemoryInfo(GetCurrentProcess(),(PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
-//    SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
-//    SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
-//
-//    std::cout<<"\nVirtual Memory Used by Process  (MB):: "<<static_cast<float>(virtualMemUsedByMe)/1024/1024<<std::endl;
-//    std::cout<<"Physical Memory Used by Process (MB):: "<<static_cast<float>(physMemUsedByMe)/1024/1024<<std::endl;
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+    GetProcessMemoryInfo(GetCurrentProcess(),(PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+    SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
+    SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
+
+    std::cout<<"\nVirtual Memory Used by Process  (MB):: "<<static_cast<float>(virtualMemUsedByMe)/1024/1024<<std::endl;
+    std::cout<<"Physical Memory Used by Process (MB):: "<<static_cast<float>(physMemUsedByMe)/1024/1024<<std::endl;
 
     return 0;
 }
@@ -184,6 +146,104 @@ std::string process(long id,bool& skip,bool& cont)
 {
     return "";
 }
+
+
+void process(long data)
+{
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+    ZeroMemory(&pmc, sizeof(PROCESS_MEMORY_COUNTERS_EX));
+    GetProcessMemoryInfo(GetCurrentProcess(),(PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+//  std::cout<<data<<" ";
+    if (pmc.PrivateUsage>HISTORYPRIVATE)
+        HISTORYPRIVATE=pmc.PrivateUsage;
+    if (pmc.WorkingSetSize>HISTORYWORKING)
+        HISTORYWORKING=pmc.WorkingSetSize;
+}
+
+void MemoryBenchmark()
+{
+        long N = 1000;
+    BinaryTreeOperations<long> b;
+    b.createN(N);
+
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+    ZeroMemory(&pmc, sizeof(PROCESS_MEMORY_COUNTERS_EX));
+    GetProcessMemoryInfo(GetCurrentProcess(),(PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+    SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
+    SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
+
+    std::cout<<"Number of Nodes :: "<<N<<std::endl;
+    std::cout<<"\nVirtual Memory Used by Process after tree Creation (KB):: "<<static_cast<float>(virtualMemUsedByMe)/1024<<std::endl;
+    std::cout<<"Physical Memory Used by Process after tree Creation (KB):: "<<static_cast<float>(physMemUsedByMe)/1024<<std::endl;
+
+
+    HISTORYPRIVATE=HISTORYWORKING=0;
+    std::cout<<std::endl<<"Recursive Pre-Order Traversal :: ";
+    b.recurssionPreOrder(process);
+    std::cout<<"\nMaximum Virtual Memory Used by Process  (KB):: "<<static_cast<float>(HISTORYPRIVATE)/1024<<std::endl;
+    std::cout<<"Maximum Physical Memory Used by Process (KB):: "<<static_cast<float>(HISTORYWORKING)/1024<<std::endl;
+
+    HISTORYPRIVATE=HISTORYWORKING=0;
+    std::cout<<std::endl<<"\nIterative Pre-Order Traversal :: ";
+    b.traversePreOrderTraversal(process);
+    std::cout<<"\nMaximum Virtual Memory Used by Process  (KB):: "<<static_cast<float>(HISTORYPRIVATE)/1024<<std::endl;
+    std::cout<<"Maximum Physical Memory Used by Process (KB):: "<<static_cast<float>(HISTORYWORKING)/1024<<std::endl;
+
+    HISTORYPRIVATE=HISTORYWORKING=0;
+    std::cout<<std::endl<<"\nIterative with \"manual stack\" Pre-Order Traversal :: ";
+    b.traversePostOrderTraversal(process);
+    std::cout<<"\nMaximum Virtual Memory Used by Process  (KB):: "<<static_cast<float>(HISTORYPRIVATE)/1024<<std::endl;
+    std::cout<<"Maximum Physical Memory Used by Process (KB):: "<<static_cast<float>(HISTORYWORKING)/1024<<std::endl;
+
+}
+
+
+void MemoryBenchmarkWithInsert()
+{
+        long N = 1000000;
+    BinaryTreeOperations<long> b(1);
+
+    std::queue<long> q;
+
+    for(int i=2; i<N;++i)
+    {
+        q.push(i);
+    }
+
+    b.insert(q);
+
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+    ZeroMemory(&pmc, sizeof(PROCESS_MEMORY_COUNTERS_EX));
+    GetProcessMemoryInfo(GetCurrentProcess(),(PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+    SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
+    SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
+
+    std::cout<<"Number of Nodes :: "<<N<<std::endl;
+    std::cout<<"\nVirtual Memory Used by Process after tree Creation (KB):: "<<static_cast<float>(virtualMemUsedByMe)/1024<<std::endl;
+    std::cout<<"Physical Memory Used by Process after tree Creation (KB):: "<<static_cast<float>(physMemUsedByMe)/1024<<std::endl;
+
+
+    HISTORYPRIVATE=HISTORYWORKING=0;
+    std::cout<<std::endl<<"Recursive Pre-Order Traversal :: ";
+    b.recurssionPreOrder(process);
+    std::cout<<"\nMaximum Virtual Memory Used by Process  (KB):: "<<static_cast<float>(HISTORYPRIVATE)/1024<<std::endl;
+    std::cout<<"Maximum Physical Memory Used by Process (KB):: "<<static_cast<float>(HISTORYWORKING)/1024<<std::endl;
+
+    HISTORYPRIVATE=HISTORYWORKING=0;
+    std::cout<<std::endl<<"\nIterative Pre-Order Traversal :: ";
+    b.traversePreOrderTraversal(process);
+    std::cout<<"\nMaximum Virtual Memory Used by Process  (KB):: "<<static_cast<float>(HISTORYPRIVATE)/1024<<std::endl;
+    std::cout<<"Maximum Physical Memory Used by Process (KB):: "<<static_cast<float>(HISTORYWORKING)/1024<<std::endl;
+
+    HISTORYPRIVATE=HISTORYWORKING=0;
+    std::cout<<std::endl<<"\nIterative with \"manual stack\" Pre-Order Traversal :: ";
+    b.traversePostOrderTraversal(process);
+    std::cout<<"\nMaximum Virtual Memory Used by Process  (KB):: "<<static_cast<float>(HISTORYPRIVATE)/1024<<std::endl;
+    std::cout<<"Maximum Physical Memory Used by Process (KB):: "<<static_cast<float>(HISTORYWORKING)/1024<<std::endl;
+
+}
+
+
 /** Old Code
 struct Node
 {
