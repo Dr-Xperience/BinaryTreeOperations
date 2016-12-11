@@ -95,6 +95,61 @@ void BinaryTreeOperations<T>::traverseLevelOrder(void (*process)(T))
     #endif // DEBUG
 }
 
+
+template<class T>
+void BinaryTreeOperations<T>::printLevelOrder(void (*process)(T,bool newLine, bool leaveNode))
+{
+    #ifdef DEBUG
+    long counter = 0;
+    #endif // DEBUG
+
+    typedef typename BinaryTree<T>::Node Node;
+    Node* root=this->root;
+
+    std::queue<Node*> q;
+
+    Node* newLevel = new Node;
+    newLevel->id = 0;
+    q.push(root);
+    q.push(newLevel);
+
+    while(!q.empty())
+    {
+    #ifdef DEBUG
+    counter++;
+    #endif // DEBUG
+
+        root= q.front(); q.pop();
+
+        if(root == nullptr)
+        {
+             process(T(),false,true);
+             continue;
+        }
+        else if(root->id == 0)
+        {
+            if(!q.empty())
+            {
+                process(T(),true,false);
+                q.push(newLevel);
+            }
+            continue;
+        }
+        else
+          process(root->data,false,false);
+
+
+       q.push(root->left);
+
+       q.push(root->right);
+    }
+
+    #ifdef DEBUG
+    std::cout<<std::endl<<"Level Order Traversal Print loop count :: "<<counter<<std::endl;
+    #endif // DEBUG
+
+}
+
 template<class T>
 void BinaryTreeOperations<T>::preOrderRec(void (*process)(T),typename BinaryTree<T>::Node * root)
 {
@@ -106,7 +161,7 @@ void BinaryTreeOperations<T>::preOrderRec(void (*process)(T),typename BinaryTree
 }
 
 template<class T>
-void BinaryTreeOperations<T>::recurssionPreOrder(void (*process)(T))
+void BinaryTreeOperations<T>::recursionPreOrder(void (*process)(T))
 {
     preOrderRec(process,this->root);
 }
@@ -144,6 +199,7 @@ void BinaryTreeOperations<T>::traversePreOrderTraversal(void (*process)(T))
     std::cout<<std::endl<<"Pre-Order Traversal loop count :: "<<counter<<std::endl;
     #endif
 }
+
 template<class T>
 void BinaryTreeOperations<T>::traversePostOrderTraversal(void (*process)(T))
 {

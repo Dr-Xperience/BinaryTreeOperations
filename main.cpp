@@ -33,9 +33,11 @@ using namespace std;
 void process(std::string);
 std::string process(long id,bool& skip, bool& cont);
 void process(long);
+void print(std::string,bool,bool);
 std::string interactive(long id,bool& skip, bool& cont);
 void MemoryBenchmark();
 void MemoryBenchmarkWithInsert();
+
 long static HISTORYPRIVATE = 0;
 long static HISTORYWORKING = 0;
 
@@ -45,54 +47,58 @@ int main()
     cout << "Hello world!" << endl;
 
 //    MemoryBenchmark();
-    MemoryBenchmarkWithInsert();
-//long a[1024][100];
-//long* ap = new long[1024];
+//    MemoryBenchmarkWithInsert();
 
 
-//    BinaryTreeOperations<std::string> b("1");
-//
-//    for(int i=2; i<=500000; ++i)
-//    {
-//        b.insert(std::to_string(i));
-////        std::cout<<" i = "<<i<<std::endl;
-//    }
+    BinaryTreeOperations<std::string> b("1");
+
+    for(int i=2; i<=9; ++i)
+    {
+        // n^2 complexity oh boy
+        b.insert(std::to_string(i));
+//        std::cout<<" i = "<<i<<std::endl;
+    }
 
 
-    /**
+
         std::cout<<std::endl<<"Level Order Traversal :: ";
-        b.traverseLevelOrder(process);
+//        b.traverseLevelOrder(process);
+       b.printLevelOrder(print);
 
         std::cout<<std::endl<<"Post Order Traversal :: ";
         b.traversePostOrderTraversal(process);
 
         std::cout<<std::endl<<"Height of Tree :: "<<b.heightDFS()<<std::endl;
 
-        std::cout<<std::endl<<"Diameter of Tree :: "<<b.diameter()<<std::endl;
-    **/
-//    /** Creating tree for checking Diameter of Tree which doesn't pass through root
-//     Tree be like of form
-//
-//           1
-//          / \
-//         2   3
-//        / \
-//       4   5
-//      /   /
-//     8   6
-//          \
-//           7
-//    Diameter will be 4,2,5,6 or 8-4-2-5-6-7
-//    **/
-//
-//
-//    BinaryTreeOperations<std::string> b1;
+//        std::cout<<std::endl<<"Diameter of Tree :: "<<b.diameter()<<std::endl;
 
-//    b1.insertInteractive(interactive);
-//
-//    std::cout<<std::endl<<"Level Order Traversal :: ";
-//    b1.traverseLevelOrder(process);
-//    std::cout<<std::endl<<"Diameter of Tree :: "<<b1.diameter()<<std::endl;
+    /** Creating tree for checking Diameter of Tree which doesn't pass through root
+     Tree be like of form
+
+           1
+          / \
+         2   3
+        / \
+       4   5
+      /   /
+     8   10
+          \
+           21
+    Diameter will be 4,2,5,9 or 8-4-2-5-9-19
+    **/
+
+
+    BinaryTreeOperations<std::string> b1;
+
+    b1.insertInteractive(process);
+
+    std::cout<<std::endl<<"Level Order Traversal :: ";
+    b1.printLevelOrder(print);
+
+    std::cout<<std::endl<<"Post Order Traversal :: ";
+    b1.traversePostOrderTraversal(process);
+
+    std::cout<<std::endl<<"Diameter of Tree :: "<<b1.diameter()<<std::endl;
 
     PROCESS_MEMORY_COUNTERS_EX pmc;
     GetProcessMemoryInfo(GetCurrentProcess(),(PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
@@ -144,9 +150,37 @@ void process(std::string data)
 
 std::string process(long id,bool& skip,bool& cont)
 {
-    return "";
+    cont = true;
+    skip = false;
+    if(id >= 21)
+    {
+        cont = false;
+        return std::to_string(id);
+    }
+    if(id == 1 || id == 2 || id == 3 || id == 4 || id == 5 || id == 8 || id == 10 || id == 21)
+    {
+        return std::to_string(id);
+    }
+    else
+    {
+       skip = true;
+       return std::string();
+    }
+//    return std;
 }
 
+void print(std::string data,bool newLine, bool leaveNode)
+{
+    if(leaveNode == true)
+     std::cout<<"N"<<" ";
+    else if(newLine == false)
+    {
+
+      std::cout<<data<<" ";
+    }
+    else
+     std::cout<<std::endl;
+}
 
 void process(long data)
 {
@@ -179,7 +213,7 @@ void MemoryBenchmark()
 
     HISTORYPRIVATE=HISTORYWORKING=0;
     std::cout<<std::endl<<"Recursive Pre-Order Traversal :: ";
-    b.recurssionPreOrder(process);
+    b.recursionPreOrder(process);
     std::cout<<"\nMaximum Virtual Memory Used by Process  (KB):: "<<static_cast<float>(HISTORYPRIVATE)/1024<<std::endl;
     std::cout<<"Maximum Physical Memory Used by Process (KB):: "<<static_cast<float>(HISTORYWORKING)/1024<<std::endl;
 
@@ -225,7 +259,7 @@ void MemoryBenchmarkWithInsert()
 
     HISTORYPRIVATE=HISTORYWORKING=0;
     std::cout<<std::endl<<"Recursive Pre-Order Traversal :: ";
-    b.recurssionPreOrder(process);
+    b.recursionPreOrder(process);
     std::cout<<"\nMaximum Virtual Memory Used by Process  (KB):: "<<static_cast<float>(HISTORYPRIVATE)/1024<<std::endl;
     std::cout<<"Maximum Physical Memory Used by Process (KB):: "<<static_cast<float>(HISTORYWORKING)/1024<<std::endl;
 

@@ -33,9 +33,13 @@ class BinaryTreeOperations:public BinaryTree<T>
         virtual ~BinaryTreeOperations();
 
         //MemberFunction
-        void recurssionPreOrder(void (*process)(T));
+        void recursionPreOrder(void (*process)(T));
         void traverseLevelOrder(void (*process)(T));
+        void printLevelOrder(void (*process)(T,bool newLine, bool leaveNode));
         void traversePreOrderTraversal(void (*process)(T));
+
+        //Complexity O(3N) or O(N) -- it can be reduced to O(N) literally
+        //But haven't tried will try sometime
         void traversePostOrderTraversal(void (*process)(T));
         long heightDFS();
         long diameter();
