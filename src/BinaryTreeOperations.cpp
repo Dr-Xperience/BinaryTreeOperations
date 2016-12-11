@@ -217,7 +217,7 @@ void BinaryTreeOperations<T>::traversePostOrderTraversal(void (*process)(T))
 
     std::stack<Snapshot> s;
 
-    Snapshot snapshot,newSnapshot;
+    Snapshot snapshot;
 
     snapshot.root=this->root;
     snapshot.stage=0;
@@ -403,8 +403,9 @@ static long Max(long x, long y)
     return(x^((x^y)&-(x<y)));
 }
 
+//diameter with O(N*N) or O(N^2) complexity
 template <class T>
-long BinaryTreeOperations<T>::diameter()
+long BinaryTreeOperations<T>::diameterN2()
 {
     #ifdef DEBUG
     long counter = 0;
@@ -437,7 +438,7 @@ long BinaryTreeOperations<T>::diameter()
         long stage;
     };
 
-    long returnVal;
+    long returnVal=-1;
 
     Snapshot snapshot;
 

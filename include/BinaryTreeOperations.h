@@ -42,7 +42,9 @@ class BinaryTreeOperations:public BinaryTree<T>
         //But haven't tried will try sometime
         void traversePostOrderTraversal(void (*process)(T));
         long heightDFS();
-        long diameter();
+
+        //diameter with O(N*N) or O(N^2) complexity
+        long diameterN2();
 
 
     protected:
