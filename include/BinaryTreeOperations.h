@@ -46,6 +46,9 @@ class BinaryTreeOperations:public BinaryTree<T>
         //diameter with O(N*N) or O(N^2) complexity
         long diameterN2();
 
+        //diameter with O(N) complexity
+        long diameter();
+
 
     protected:
         void preOrderRec(void (*process)(T),typename BinaryTree<T>::Node * node);

@@ -1,4 +1,4 @@
-/****************************************************************************
+/*****************************0*0 **********************************************
     BinaryTreeOperations Library (It uses Iterative technique to perform all operation (Some are iterations converted from recursion).
     Copyright (C) 2016  Anubhav Arun <dr.xperience@gmail.com>
 
@@ -50,9 +50,10 @@ int main()
 //    MemoryBenchmarkWithInsert();
 
 
+
     BinaryTreeOperations<std::string> b("1");
 
-    for(int i=2; i<=9; ++i)
+    for(int i=2; i<=16; ++i)
     {
         // n^2 complexity oh boy
         b.insert(std::to_string(i));
@@ -61,16 +62,16 @@ int main()
 
 
 
-        std::cout<<std::endl<<"Level Order Traversal :: ";
+    std::cout<<std::endl<<"Level Order Traversal :: ";
 //        b.traverseLevelOrder(process);
-       b.printLevelOrder(print);
+    b.printLevelOrder(print);
 
-        std::cout<<std::endl<<"Post Order Traversal :: ";
-        b.traversePostOrderTraversal(process);
+    std::cout<<std::endl<<"Post Order Traversal :: ";
+    b.traversePostOrderTraversal(process);
 
-        std::cout<<std::endl<<"Height of Tree :: "<<b.heightDFS()<<std::endl;
+    std::cout<<std::endl<<"Height of Tree :: "<<b.heightDFS()<<std::endl;
 
-//        std::cout<<std::endl<<"Diameter of Tree :: "<<b.diameterN2()<<std::endl;
+    std::cout<<std::endl<<"Diameter of Tree :: "<<b.diameter()<<std::endl;
 
     /** Creating tree for checking Diameter of Tree which doesn't pass through root
      Tree be like of form
@@ -82,9 +83,9 @@ int main()
        4   5
       /   /
      8   10
-          \
-           21
-    Diameter will be 4,2,5,10 or 8-4-2-5-10-21
+    /     \
+    16      21
+    Diameter will be 8,4,2,5,10 or 16-8-4-2-5-10-21
     **/
 
 
@@ -98,7 +99,9 @@ int main()
     std::cout<<std::endl<<"Post Order Traversal :: ";
     b1.traversePostOrderTraversal(process);
 
-    std::cout<<std::endl<<"Diameter of Tree :: "<<b1.diameterN2()<<std::endl;
+//    std::cout<<std::endl<<"Diameter of Tree :: "<<b1.diameterN2()<<std::endl;
+
+    std::cout<<std::endl<<"Diameter of Tree :: "<<b1.diameter()<<std::endl;
 
     PROCESS_MEMORY_COUNTERS_EX pmc;
     GetProcessMemoryInfo(GetCurrentProcess(),(PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
@@ -152,34 +155,46 @@ std::string process(long id,bool& skip,bool& cont)
 {
     cont = true;
     skip = false;
-    if(id >= 21)
+
+    switch (id)
     {
-        cont = false;
-        return std::to_string(id);
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 8:
+        case 10:
+        case 16:
+        {
+             return std::to_string(id);
+        }
+        case 21:
+        {
+            cont=false;
+            return std::to_string(id);
+        }
+        default:
+        {
+          skip = true;
+          return std::string();
+        }
     }
-    if(id == 1 || id == 2 || id == 3 || id == 4 || id == 5 || id == 8 || id == 10 || id == 21)
-    {
-        return std::to_string(id);
-    }
-    else
-    {
-       skip = true;
-       return std::string();
-    }
+
 //    return std;
 }
 
 void print(std::string data,bool newLine, bool leaveNode)
 {
     if(leaveNode == true)
-     std::cout<<"N"<<" ";
+        std::cout<<"N"<<" ";
     else if(newLine == false)
     {
 
-      std::cout<<data<<" ";
+        std::cout<<data<<" ";
     }
     else
-     std::cout<<std::endl;
+        std::cout<<std::endl;
 }
 
 void process(long data)
@@ -196,7 +211,7 @@ void process(long data)
 
 void MemoryBenchmark()
 {
-        long N = 1000;
+    long N = 1000;
     BinaryTreeOperations<long> b;
     b.createN(N);
 
@@ -234,12 +249,12 @@ void MemoryBenchmark()
 
 void MemoryBenchmarkWithInsert()
 {
-        long N = 1000000;
+    long N = 1000000;
     BinaryTreeOperations<long> b(1);
 
     std::queue<long> q;
 
-    for(int i=2; i<N;++i)
+    for(int i=2; i<N; ++i)
     {
         q.push(i);
     }

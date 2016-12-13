@@ -411,6 +411,17 @@ long BinaryTreeOperations<T>::diameterN2()
     long counter = 0;
     #endif // DEBUG
     /**
+    //How does diameter algo work
+    //
+    //Diameter for a node is calculated by
+    //getting height of left subtree + right subtree + 1
+    // 1 because we need to add current edge to height as well.
+    //
+    //Now to get the diameter of the subtree
+    //we compare the diameter of node with diameter of left subtree and right subtree
+    //which ever is maximum becomes the diameter of subtree
+    //
+    //We just repeat the same step for every node/subtree
     long diameter(root)
     {
         if(root == null)
@@ -422,7 +433,7 @@ long BinaryTreeOperations<T>::diameterN2()
         long leftDiameter=diameter(root->left);
         long rightDiameter=diameter(root->right);
 
-        return MAX(leftHeight+rightHeight,Max(leftDiameter,rightDiameter));
+        return MAX(leftHeight+rightHeight+1,Max(leftDiameter,rightDiameter));
     }
     */
 
@@ -529,4 +540,218 @@ long BinaryTreeOperations<T>::diameterN2()
 
     return returnVal;
 }
+
+
+template <class T>
+long BinaryTreeOperations<T>::diameter()
+{
+    #ifdef DEBUG
+    long counter=0;
+    #endif // DEBUG
+    /**
+      // calculate diameter along with height this will give us algorithm with complexity O(N)
+
+      // conventional height algorithm
+      long height(Node * root)
+      {
+        if(root == nullptr)
+            return -1;
+
+        long heightLeft = height(root->left);
+        long heightRight = height(root->right);
+
+        return (Max(heightLeft,heightRight)+1);
+      }
+
+    // Process of converting height algo to diameter
+    // having complexity as O(N)
+
+    // As mentioned earlier in diameterN2
+    // Diameter of a node is height of left subtree + right subtree + 1
+
+    // so we can use this in our current height algorithm
+
+      long height(Node * root)
+      {
+        if(root == nullptr)
+            return -1;
+
+        long heightLeft = height(root->left);
+        long heightRight = height(root->right);
+
+        diamterNode = heightLeft + heightRight + 1;
+
+    // Here comes the actual problem,
+    // we need to get diameter of left subtree and right subtree as well
+    // we can solve it by passing a pointer(reference in case of c++)
+    // to the height method, which will store the diameter
+
+       long height(Node *root, long *diameter) //in explanation I am implementing using pointer
+       {                                      //but in actual code it will be reference
+
+        if(root == nullptr)
+            return -1;
+
+        long diameterLeft = diameterRight = 0;
+
+        long heightLeft = height(root->left, &diameterLeft);
+        long heightRight = height(root->right, &diameterRight);
+
+        diameterNode = heightLeft + heightRight + 1;
+
+        *diameter = Max(diameterNode,Max(diameterLeft,diameterRight));
+
+        return Max(heightLeft, heightRight)+1;
+       }
+
+     // We can make it a more optimized (space optimized)
+     // (The algo from narasimha karumanchi's book
+
+         long height(Node * root, long *diameter)
+         {
+            if(root == nullptr)
+              return -1;
+
+            heightLeft = height(root->left, diameter);
+            heightRight = height(root->right, diameter);
+
+            // Note: Till this point the diameter variable contains
+            // the max of diameter of left and right subtree
+
+            // We cleverly gets that by passing same pointer
+            // while calculating the height of left subtree
+            // and right subtree
+
+            if(heightLeft+heightRight+1 > *diameter)
+              *diameter = heightLeft + heightRight + 1;
+
+                   //OR
+                   //*diameter = Max(heightLeft+heightRight+1,*diameter);
+
+            // So, the above comparison while in right subtree
+            // will compare current diameter with the one
+            // we got from left subtree
+
+            // Hence, after getting height from left and right subtree
+            // The pointer diameter will contain
+            // diameter of either left or right subtree which ever is max
+
+            // Then, we just compare the diameter of currentNode with obtained diameter
+            // Whichever is Max becomes the diameter of current subtree
+
+            // Finally, like regular height algorithm we return the height + 1
+            return Max(heightLeft,heightRight) + 1;
+         }
+
+         The diameter will called as:
+         int diameterV = -1;
+         diameter(root,&diameterV);
+    **/
+
+    typedef typename BinaryTree<T>::Node Node;
+
+    struct Snapshot
+    {
+        //input parameters
+        Node * root;
+        //No need to make data member for diameter
+        //because it is a reference
+        //(remember I said
+        //I will use diameter as reference in implementation
+
+        //local variable
+        long heightLeft,heightRight=0;
+
+        //stages
+        long stage = 0;
+
+    };
+
+    Snapshot snapshot;
+    snapshot.root=this->root;
+    snapshot.heightLeft=snapshot.heightRight = -1;
+    snapshot.stage = 0;
+
+    std::stack<Snapshot> s;
+    s.push(snapshot);
+
+    long returnVal =-1;
+    long diameter = -1;
+    while(!s.empty())
+    {
+        #ifdef DEBUG
+        counter++;
+        #endif // DEBUG
+
+        snapshot = s.top();
+        s.pop();
+
+        switch(snapshot.stage)
+        {
+            case(0):
+            {
+                if(snapshot.root == nullptr)
+                  {
+                     returnVal = -1;
+                     continue;
+                  }
+                snapshot.stage = 1;
+                s.push(snapshot);
+
+                if(snapshot.root->left != nullptr)
+                {
+                    snapshot.root = snapshot.root->left;
+                    snapshot.heightLeft=snapshot.heightRight=-1;
+                    snapshot.stage=0;
+                    s.push(snapshot);
+                }
+                else
+                    returnVal=-1;
+
+                continue;
+            }
+
+            case(1):
+            {
+                snapshot.heightLeft = returnVal;
+                snapshot.stage = 2;
+                s.push(snapshot);
+
+                if(snapshot.root->right != nullptr)
+                {
+                    snapshot.root = snapshot.root->right;
+                    snapshot.heightLeft=snapshot.heightRight=-1;
+                    snapshot.stage=0;
+                    s.push(snapshot);
+                }
+                else
+                    returnVal=-1;
+
+                continue;
+            }
+
+            case(2):
+            {
+                snapshot.heightRight = returnVal;
+
+                diameter = Max(snapshot.heightLeft+snapshot.heightRight+1,diameter);
+
+                returnVal = Max(snapshot.heightLeft,snapshot.heightRight)+1;
+
+                continue;
+            }
+        }
+    }
+
+
+    #ifdef DEBUG
+    std::cout<<"\nNumber of Loops for diameter :: "<<counter<<std::endl;
+    #endif // DEBUG
+
+    //since we want to return diameter as result
+    //we will replace returnVal with diameter
+    //return returnVal;
+    return diameter;
+}
+
 #endif
