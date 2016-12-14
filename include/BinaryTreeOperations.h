@@ -20,6 +20,7 @@
 #define BINARYTREEOPERATIONS_H
 
 #include "BinaryTree.h"
+#include <list>
 
 template<class T>
 class BinaryTreeOperations:public BinaryTree<T>
@@ -42,12 +43,16 @@ class BinaryTreeOperations:public BinaryTree<T>
         //But haven't tried will try sometime
         void traversePostOrderTraversal(void (*process)(T));
         long heightDFS();
+        long heightBFS();
 
         //diameter with O(N*N) or O(N^2) complexity
         long diameterN2();
 
         //diameter with O(N) complexity
         long diameter();
+
+        //Program to return the nodes of diameter in linked list
+        std::list<unsigned long> diameterPrint();
 
 
     protected:

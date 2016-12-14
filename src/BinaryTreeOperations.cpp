@@ -23,6 +23,7 @@
 #include<iostream>
 #endif // DEBUG
 
+#include <list>
 #include<queue>
 #include<stack>
 
@@ -60,6 +61,9 @@ BinaryTreeOperations<T>::~BinaryTreeOperations()
 template<class T>
 void BinaryTreeOperations<T>::traverseLevelOrder(void (*process)(T))
 {
+    if(this->root == nullptr)
+        return;
+
     typedef typename BinaryTree<T>::Node Node;
     Node* root = this->root;
 
@@ -103,6 +107,9 @@ void BinaryTreeOperations<T>::printLevelOrder(void (*process)(T,bool newLine, bo
     long counter = 0;
     #endif // DEBUG
 
+    if(this->root == nullptr)
+        return;
+
     typedef typename BinaryTree<T>::Node Node;
     Node* root=this->root;
 
@@ -110,6 +117,7 @@ void BinaryTreeOperations<T>::printLevelOrder(void (*process)(T,bool newLine, bo
 
     Node* newLevel = new Node;
     newLevel->id = 0;
+
     q.push(root);
     q.push(newLevel);
 
@@ -173,6 +181,9 @@ void BinaryTreeOperations<T>::traversePreOrderTraversal(void (*process)(T))
     long counter=0;
     #endif // DEBUG
 
+    if(this->root == nullptr)
+        return;
+
     typedef typename BinaryTree<T>::Node Node;
     Node * root = this->root;
 
@@ -207,12 +218,14 @@ void BinaryTreeOperations<T>::traversePostOrderTraversal(void (*process)(T))
     long counter =0;
     #endif //DEBUG
 
+    if(this->root == nullptr)
+        return;
     typedef typename BinaryTree<T>::Node Node;
     struct Snapshot
     {
         Node* root; //argument of Member Function
         //No memberFunctions Present
-        long stage;
+        unsigned long stage=0;
     };
 
     std::stack<Snapshot> s;
@@ -301,6 +314,9 @@ long BinaryTreeOperations<T>::heightDFS()
        return(r+1);
  }
 */
+    if(this->root == nullptr)
+        return -1;
+
     typedef typename BinaryTree<T>::Node Node;
 
     struct Snapshot
@@ -308,9 +324,9 @@ long BinaryTreeOperations<T>::heightDFS()
         //Arguments to function
         Node* root;
         //Local Variables
-        long leftHeight, rightHeight;
+        long leftHeight = -1 , rightHeight = -1;
         //stage
-        int stage;
+        unsigned long stage = 0;
     };
 
     long returnVal = -1; //Default Return Value
@@ -393,9 +409,60 @@ long BinaryTreeOperations<T>::heightDFS()
     }
 
     #ifdef DEBUG
-    std::cout<<std::endl<<"Loop Count of Height of Tree :: "<<counter<<std::endl;
+    std::cout<<std::endl<<"Loop Count of Height of Tree(DFS) :: "<<counter<<std::endl;
     #endif // DEBUG
     return returnVal;
+}
+
+template<class T>
+long BinaryTreeOperations<T>::heightBFS()
+{
+    #ifdef DEBUG
+    long counter =0;
+    #endif // DEBUG
+
+    if(this->root == nullptr)
+        return -1;
+
+    typedef typename BinaryTree<T>::Node Node;
+    Node *root = this->root;
+
+    std::queue<Node*> q;
+
+    q.push(root);
+    q.push(nullptr);
+    long height = 0;
+
+    while(!q.empty())
+    {
+        #ifdef DEBUG
+        counter ++;
+        #endif // DEBUG
+
+        root = q.front(); q.pop();
+
+        if(root == nullptr )
+        {
+            if(q.empty() == false)
+            {
+                height++;
+                q.push(nullptr);
+            }
+            continue;
+        }
+
+        if(root->left != nullptr)
+            q.push(root->left);
+
+        if(root->right != nullptr)
+            q.push(root->right);
+    }
+
+    #ifdef DEBUG
+    std::cout<<std::endl<<"Loop Count of Height of Tree(BFS) :: "<<counter<<std::endl;
+    #endif // DEBUG
+
+    return height;
 }
 
 static long Max(long x, long y)
@@ -437,6 +504,9 @@ long BinaryTreeOperations<T>::diameterN2()
     }
     */
 
+    if(this->root == nullptr)
+        return -1;
+
     typedef typename BinaryTree<T>::Node Node;
 
     struct Snapshot
@@ -444,9 +514,9 @@ long BinaryTreeOperations<T>::diameterN2()
         //function argument
         Node* root;
         //local variable
-        long leftHeight,rightHeight,leftDiameter,rightDiameter;
+        long leftHeight = -1, rightHeight = -1,leftDiameter = -1,rightDiameter = -1;
         //stage
-        long stage;
+        unsigned long stage=0;
     };
 
     long returnVal=-1;
@@ -648,6 +718,8 @@ long BinaryTreeOperations<T>::diameter()
          diameter(root,&diameterV);
     **/
 
+    if(this->root == nullptr)
+        return -1;
     typedef typename BinaryTree<T>::Node Node;
 
     struct Snapshot
@@ -660,10 +732,10 @@ long BinaryTreeOperations<T>::diameter()
         //I will use diameter as reference in implementation
 
         //local variable
-        long heightLeft,heightRight=0;
+        long heightLeft=-1,heightRight=-1;
 
         //stages
-        long stage = 0;
+        unsigned long stage = 0;
 
     };
 
@@ -752,6 +824,182 @@ long BinaryTreeOperations<T>::diameter()
     //we will replace returnVal with diameter
     //return returnVal;
     return diameter;
+}
+
+//Program to
+template<class T>
+std::list<unsigned long> BinaryTreeOperations<T>::diameterPrint()
+{
+    /**
+
+    std::list<unsigned long> diameterPrint(Node * root, long &height, long &diameter, list<long> &diameterList)
+    {
+        long heightLeft = heightRight = -1;
+
+        std::list<unsigned long> subtreeLeft, subtreeRight;
+
+        if(root->left != nullptr)
+        {
+            subtreeLeft = diameterPrint(root->left,heightLeft,diameter,diameterList);
+        }
+
+        if(root->right != nullptr)
+        {
+            subtreeRight = diameterPrint(root->right,heightRight,diameter,diameterRight);
+        }
+
+        if(heightLeft+heightRight+1 > diameter)
+        {
+            diameterList.clear();
+            diameterList.insert(diameterList.begin(),subtreeLeft.begin(),subtreeLeft.end());
+            diameterList.push_back(root->id);
+            diameterList.insert(diameterList.begin(),subtreeRight,begin(),subtreeRight.end());
+            diameter = heightLeft + heightRight + 1;
+        }
+
+        if(heightLeft>heightRight)
+        {
+            height = heightLeft+1;
+            subtreeLeft.push_back(root->id);
+            return subtreeLeft;
+        }
+        else
+        {
+            height = heightRight + 1;
+            subtreeRight.push_front(root->id);
+            return subtreeRight;
+        }
+    }
+    **/
+
+    #ifdef DEBUG
+    unsigned long counter=0;
+    #endif // DEBUG
+
+    if(this->root == nullptr)
+      {
+         return std::list<unsigned long>();
+      }
+
+    typedef typename BinaryTree<T>::Node Node;
+
+    struct Snapshot
+    {
+        //input parameters except reference
+        Node * root;
+
+        //local variables
+        long heightLeft=-1,heightRight=-1;
+        std::list<unsigned long> subtreeLeft, subtreeRight;
+
+        //stage
+        unsigned long stage=0;
+    };
+
+    Snapshot snapshot;
+
+    snapshot.root = this->root;
+
+    std::stack<Snapshot> s;
+    s.push(snapshot);
+
+    long height=-1, diameter=-1;
+    std::list<unsigned long> diameterList,returnVal;
+
+    while(!s.empty())
+    {
+        #ifdef DEBUG
+        counter ++;
+        #endif // DEBUG
+
+        snapshot = s.top(); s.pop();
+
+        switch(snapshot.stage)
+        {
+            case 0:
+            {
+                snapshot.stage = 1;
+                s.push(snapshot);
+
+                if(snapshot.root->left != nullptr)
+                {
+                    snapshot.root = snapshot.root->left;
+                    snapshot.heightLeft=snapshot.heightRight=-1;
+                    snapshot.subtreeLeft.clear();
+                    snapshot.subtreeRight.clear();
+                    snapshot.stage = 0;
+                    s.push(snapshot);
+                }
+
+                continue;
+            }
+
+            case 1:
+            {
+                if(snapshot.root->left != nullptr)
+                {
+                    snapshot.heightLeft = height;
+                    snapshot.subtreeLeft = returnVal;
+                }
+
+                snapshot.stage = 2;
+                s.push(snapshot);
+
+
+                if(snapshot.root->right != nullptr)
+                {
+                    snapshot.root = snapshot.root->right;
+                    snapshot.heightLeft=snapshot.heightRight=-1;
+                    snapshot.subtreeLeft.clear();
+                    snapshot.subtreeRight.clear();
+                    snapshot.stage = 0;
+                    s.push(snapshot);
+                }
+                continue;
+            }
+
+            case 2:
+            {
+                if(snapshot.root->right != nullptr)
+                {
+                    snapshot.heightRight = height;
+                    snapshot.subtreeRight = returnVal;
+                }
+
+                if(snapshot.heightLeft+snapshot.heightRight + 1 > diameter)
+                {
+                    diameterList.clear();
+                    diameterList.insert(diameterList.end(),snapshot.subtreeLeft.begin(),snapshot.subtreeLeft.end());
+                    diameterList.push_back(snapshot.root->id);
+                    diameterList.insert(diameterList.end(),snapshot.subtreeRight.rbegin(),snapshot.subtreeRight.rend());
+                    diameter = snapshot.heightLeft + snapshot.heightRight + 1;
+                }
+
+                if(snapshot.heightLeft>snapshot.heightRight)
+                {
+                    height = snapshot.heightLeft + 1;
+                    snapshot.subtreeLeft.push_back(snapshot.root->id);
+                    returnVal=snapshot.subtreeLeft;
+                }
+                else
+                {
+                    height = snapshot.heightRight + 1;
+                    snapshot.subtreeRight.push_back(snapshot.root->id);
+                    returnVal=snapshot.subtreeRight;
+                }
+
+                continue;
+            }
+        }
+
+    }
+
+
+    #ifdef DEBUG
+    std::cout<<std::endl<<"Number of Loops to print diameter :: "<<counter<<std::endl;
+    #endif // DEBUG
+
+    return diameterList;
 }
 
 #endif

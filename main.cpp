@@ -18,7 +18,8 @@
 *****************************************************************************/
 #include <iostream>
 #include <string>
-#include <algorithm>
+#include <algorithm> // for copy and transform algorithm
+#include<iterator>//for ostream_iterator
 #include "BinaryTreeOperations.h"
 #include "BinaryTreeOperations.cpp"
 
@@ -53,25 +54,32 @@ int main()
 
     BinaryTreeOperations<std::string> b("1");
 
-    for(int i=2; i<=16; ++i)
+    std::list<std::string> input;
+    for(int i=2; i<=160000; ++i)
     {
         // n^2 complexity oh boy
-        b.insert(std::to_string(i));
+//        b.insert(std::to_string(i));
+          input.push_back(std::to_string(i));
 //        std::cout<<" i = "<<i<<std::endl;
     }
-
+    b.insert(input);
 
 
     std::cout<<std::endl<<"Level Order Traversal :: ";
 //        b.traverseLevelOrder(process);
-    b.printLevelOrder(print);
+//    b.printLevelOrder(print);
 
     std::cout<<std::endl<<"Post Order Traversal :: ";
-    b.traversePostOrderTraversal(process);
+//    b.traversePostOrderTraversal(process);
 
-    std::cout<<std::endl<<"Height of Tree :: "<<b.heightDFS()<<std::endl;
+    std::cout<<std::endl<<"Height of Tree DFS :: "<<b.heightDFS()<<std::endl;
+    std::cout<<std::endl<<"Height of Tree BFS :: "<<b.heightBFS()<<std::endl;
 
     std::cout<<std::endl<<"Diameter of Tree :: "<<b.diameter()<<std::endl;
+    std::list<unsigned long> list = b.diameterPrint();
+
+    std::copy(list.begin(),list.end(),std::ostream_iterator<unsigned long>(std::cout," "));
+    std::cout<<std::endl;
 
     /** Creating tree for checking Diameter of Tree which doesn't pass through root
      Tree be like of form
@@ -88,21 +96,30 @@ int main()
     Diameter will be 8,4,2,5,10 or 16-8-4-2-5-10-21
     **/
 
+    b.clear();
+//    BinaryTreeOperations<std::string> b1;
 
-    BinaryTreeOperations<std::string> b1;
-
-    b1.insertInteractive(process);
+    b.insertInteractive(process);
 
     std::cout<<std::endl<<"Level Order Traversal :: ";
-    b1.printLevelOrder(print);
+    b.printLevelOrder(print);
 
     std::cout<<std::endl<<"Post Order Traversal :: ";
-    b1.traversePostOrderTraversal(process);
+    b.traversePostOrderTraversal(process);
 
 //    std::cout<<std::endl<<"Diameter of Tree :: "<<b1.diameterN2()<<std::endl;
 
-    std::cout<<std::endl<<"Diameter of Tree :: "<<b1.diameter()<<std::endl;
+    std::cout<<std::endl<<"Diameter of Tree :: "<<b.diameter()<<std::endl;
 
+    list.clear();
+    //printing diameter to screen
+    list = b.diameterPrint();
+
+//    shortcut to print list on ostream
+    std::copy(list.begin(),list.end(),std::ostream_iterator<unsigned long>(std::cout," "));
+    std::cout<<std::endl;
+//    b.clear();
+//
     PROCESS_MEMORY_COUNTERS_EX pmc;
     GetProcessMemoryInfo(GetCurrentProcess(),(PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
     SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
@@ -252,11 +269,11 @@ void MemoryBenchmarkWithInsert()
     long N = 1000000;
     BinaryTreeOperations<long> b(1);
 
-    std::queue<long> q;
+    std::list<long> q;
 
     for(int i=2; i<N; ++i)
     {
-        q.push(i);
+        q.push_back(i);
     }
 
     b.insert(q);
