@@ -34,6 +34,7 @@ using namespace std;
 void process(std::string);
 std::string process(long id,bool& skip, bool& cont);
 void process(long);
+void print(std::deque<unsigned long>&);
 void print(std::string,bool,bool);
 std::string interactive(long id,bool& skip, bool& cont);
 void MemoryBenchmark();
@@ -54,8 +55,8 @@ int main()
 
     BinaryTreeOperations<std::string> b("1");
 
-    std::list<std::string> input;
-    for(int i=2; i<=160000; ++i)
+    std::deque<std::string> input;
+    for(int i=2; i<=1; ++i)
     {
         // n^2 complexity oh boy
 //        b.insert(std::to_string(i));
@@ -67,7 +68,7 @@ int main()
 
     std::cout<<std::endl<<"Level Order Traversal :: ";
 //        b.traverseLevelOrder(process);
-//    b.printLevelOrder(print);
+    b.printLevelOrder(print);
 
     std::cout<<std::endl<<"Post Order Traversal :: ";
 //    b.traversePostOrderTraversal(process);
@@ -76,10 +77,13 @@ int main()
     std::cout<<std::endl<<"Height of Tree BFS :: "<<b.heightBFS()<<std::endl;
 
     std::cout<<std::endl<<"Diameter of Tree :: "<<b.diameter()<<std::endl;
-    std::list<unsigned long> list = b.diameterPrint();
+    std::deque<unsigned long> list = b.diameterPrint();
 
     std::copy(list.begin(),list.end(),std::ostream_iterator<unsigned long>(std::cout," "));
     std::cout<<std::endl;
+
+    std::cout<<"Print all the paths to the leaves"<<std::endl;
+    b.pathToLeavesPrint(print);
 
     /** Creating tree for checking Diameter of Tree which doesn't pass through root
      Tree be like of form
@@ -201,6 +205,13 @@ std::string process(long id,bool& skip,bool& cont)
 //    return std;
 }
 
+void print(std::deque<unsigned long>& list)
+{
+    std::cout<<std::endl;
+    std::copy(list.begin(),list.end(),std::ostream_iterator<unsigned long>(std::cout," "));
+    std::cout<<std::endl;
+}
+
 void print(std::string data,bool newLine, bool leaveNode)
 {
     if(leaveNode == true)
@@ -269,7 +280,7 @@ void MemoryBenchmarkWithInsert()
     long N = 1000000;
     BinaryTreeOperations<long> b(1);
 
-    std::list<long> q;
+    std::deque<long> q;
 
     for(int i=2; i<N; ++i)
     {

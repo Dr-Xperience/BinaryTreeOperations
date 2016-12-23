@@ -20,7 +20,7 @@
 #define BINARYTREEOPERATIONS_H
 
 #include "BinaryTree.h"
-#include <list>
+#include <deque>
 
 template<class T>
 class BinaryTreeOperations:public BinaryTree<T>
@@ -51,8 +51,11 @@ class BinaryTreeOperations:public BinaryTree<T>
         //diameter with O(N) complexity
         long diameter();
 
-        //Program to return the nodes of diameter in linked list
-        std::list<unsigned long> diameterPrint();
+        //Method to return the nodes of diameter in linked list
+        std::deque<unsigned long> diameterPrint();
+
+        //To print the all the path to leave nodes
+        void pathToLeavesPrint(void (*process)(std::deque<unsigned long>&));
 
 
     protected:

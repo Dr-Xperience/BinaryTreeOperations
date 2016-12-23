@@ -23,7 +23,7 @@
 #include<iostream>
 #endif // DEBUG
 
-#include <list>
+#include <deque>
 #include<queue>
 #include<stack>
 
@@ -481,8 +481,13 @@ long BinaryTreeOperations<T>::diameterN2()
     //How does diameter algo work
     //
     //Diameter for a node is calculated by
-    //getting height of left subtree + right subtree + 1
-    // 1 because we need to add current edge to height as well.
+    //getting height of left subtree + right subtree + 2
+    // 2 because we need to add left edge and right edge of current node to height as well.
+    //
+    //This is because like height, diameter is count of edges,
+    //We add two to the height of left subtree and right subtree
+    //because, we have two edges connecting left subtree and right subtree respectively
+    //to form a diameter.
     //
     //Now to get the diameter of the subtree
     //we compare the diameter of node with diameter of left subtree and right subtree
@@ -492,7 +497,7 @@ long BinaryTreeOperations<T>::diameterN2()
     long diameter(root)
     {
         if(root == null)
-            return 0;
+            return -1;
 
         long leftHeight=heightDFS(root->left);
         long rightHeight=heightDFS(root->right);
@@ -500,7 +505,7 @@ long BinaryTreeOperations<T>::diameterN2()
         long leftDiameter=diameter(root->left);
         long rightDiameter=diameter(root->right);
 
-        return MAX(leftHeight+rightHeight+1,Max(leftDiameter,rightDiameter));
+        return MAX(leftHeight+rightHeight+2,Max(leftDiameter,rightDiameter));
     }
     */
 
@@ -596,7 +601,7 @@ long BinaryTreeOperations<T>::diameterN2()
 //                    std::cout<<"\n snapshot.leftHeight = "<<snapshot.leftHeight<<std::endl;
 //                    std::cout<<"\n snapshot.rightHeight = "<<snapshot.rightHeight<<std::endl;
 //                 #endif // DEBUG
-                returnVal = Max(snapshot.leftHeight+snapshot.rightHeight+1,Max(snapshot.leftDiameter,snapshot.rightDiameter));
+                returnVal = Max(snapshot.leftHeight+snapshot.rightHeight+2,Max(snapshot.leftDiameter,snapshot.rightDiameter));
                 continue;
             }
 
@@ -611,7 +616,7 @@ long BinaryTreeOperations<T>::diameterN2()
     return returnVal;
 }
 
-
+//Method to return diameter of tree in O(N) complexity
 template <class T>
 long BinaryTreeOperations<T>::diameter()
 {
@@ -637,7 +642,8 @@ long BinaryTreeOperations<T>::diameter()
     // having complexity as O(N)
 
     // As mentioned earlier in diameterN2
-    // Diameter of a node is height of left subtree + right subtree + 1
+    // Diameter of a node is height of left subtree + right subtree + 2
+    // (Two because there are two edges connecting the left and right subtree)
 
     // so we can use this in our current height algorithm
 
@@ -649,7 +655,12 @@ long BinaryTreeOperations<T>::diameter()
         long heightLeft = height(root->left);
         long heightRight = height(root->right);
 
-        diamterNode = heightLeft + heightRight + 1;
+    // Like height, diameter is count of edges,
+    // We add two to the height of left subtree and right subtree,
+    // because we have two edges connecting left subtree and right subtree
+    // to form a diameter.
+
+        diameterNode = heightLeft + heightRight + 1 + 1;
 
     // Here comes the actual problem,
     // we need to get diameter of left subtree and right subtree as well
@@ -662,12 +673,12 @@ long BinaryTreeOperations<T>::diameter()
         if(root == nullptr)
             return -1;
 
-        long diameterLeft = diameterRight = 0;
+        long diameterLeft = 0, diameterRight = 0;
 
         long heightLeft = height(root->left, &diameterLeft);
         long heightRight = height(root->right, &diameterRight);
 
-        diameterNode = heightLeft + heightRight + 1;
+        long diameterNode = heightLeft + heightRight + 2;
 
         *diameter = Max(diameterNode,Max(diameterLeft,diameterRight));
 
@@ -693,10 +704,10 @@ long BinaryTreeOperations<T>::diameter()
             // and right subtree
 
             if(heightLeft+heightRight+1 > *diameter)
-              *diameter = heightLeft + heightRight + 1;
+              *diameter = heightLeft + heightRight + 2;
 
                    //OR
-                   //*diameter = Max(heightLeft+heightRight+1,*diameter);
+                   //*diameter = Max(heightLeft+heightRight+2,*diameter);
 
             // So, the above comparison while in right subtree
             // will compare current diameter with the one
@@ -806,7 +817,7 @@ long BinaryTreeOperations<T>::diameter()
             {
                 snapshot.heightRight = returnVal;
 
-                diameter = Max(snapshot.heightLeft+snapshot.heightRight+1,diameter);
+                diameter = Max(snapshot.heightLeft+snapshot.heightRight+2,diameter);
 
                 returnVal = Max(snapshot.heightLeft,snapshot.heightRight)+1;
 
@@ -826,17 +837,17 @@ long BinaryTreeOperations<T>::diameter()
     return diameter;
 }
 
-//Program to
+//Method to return list containing nodes in diameter of tree
 template<class T>
-std::list<unsigned long> BinaryTreeOperations<T>::diameterPrint()
+std::deque<unsigned long> BinaryTreeOperations<T>::diameterPrint()
 {
     /**
 
-    std::list<unsigned long> diameterPrint(Node * root, long &height, long &diameter, list<long> &diameterList)
+    std::deque<unsigned long> diameterPrint(Node * root, long &height, long &diameter, deque<long> &diameterList)
     {
-        long heightLeft = heightRight = -1;
+        long heightLeft = -1, heightRight = -1;
 
-        std::list<unsigned long> subtreeLeft, subtreeRight;
+        std::deque<unsigned long> subtreeLeft, subtreeRight;
 
         if(root->left != nullptr)
         {
@@ -848,13 +859,13 @@ std::list<unsigned long> BinaryTreeOperations<T>::diameterPrint()
             subtreeRight = diameterPrint(root->right,heightRight,diameter,diameterRight);
         }
 
-        if(heightLeft+heightRight+1 > diameter)
+        if(heightLeft+heightRight+2 > diameter)
         {
+            diameter = heightLeft + heightRight + 2;
             diameterList.clear();
             diameterList.insert(diameterList.begin(),subtreeLeft.begin(),subtreeLeft.end());
             diameterList.push_back(root->id);
-            diameterList.insert(diameterList.begin(),subtreeRight,begin(),subtreeRight.end());
-            diameter = heightLeft + heightRight + 1;
+            diameterList.insert(diameterList.begin(),subtreeRight,rbegin(),subtreeRight.rend());
         }
 
         if(heightLeft>heightRight)
@@ -866,7 +877,7 @@ std::list<unsigned long> BinaryTreeOperations<T>::diameterPrint()
         else
         {
             height = heightRight + 1;
-            subtreeRight.push_front(root->id);
+            subtreeRight.push_back(root->id);
             return subtreeRight;
         }
     }
@@ -878,7 +889,7 @@ std::list<unsigned long> BinaryTreeOperations<T>::diameterPrint()
 
     if(this->root == nullptr)
       {
-         return std::list<unsigned long>();
+         return std::deque<unsigned long>();
       }
 
     typedef typename BinaryTree<T>::Node Node;
@@ -890,7 +901,7 @@ std::list<unsigned long> BinaryTreeOperations<T>::diameterPrint()
 
         //local variables
         long heightLeft=-1,heightRight=-1;
-        std::list<unsigned long> subtreeLeft, subtreeRight;
+        std::deque<unsigned long> subtreeLeft, subtreeRight;
 
         //stage
         unsigned long stage=0;
@@ -904,7 +915,7 @@ std::list<unsigned long> BinaryTreeOperations<T>::diameterPrint()
     s.push(snapshot);
 
     long height=-1, diameter=-1;
-    std::list<unsigned long> diameterList,returnVal;
+    std::deque<unsigned long> diameterList,returnVal;
 
     while(!s.empty())
     {
@@ -918,6 +929,16 @@ std::list<unsigned long> BinaryTreeOperations<T>::diameterPrint()
         {
             case 0:
             {
+//                if(snapshot.root->left == nullptr && snapshot.root->right == nullptr)
+//                {
+//                    height = 0;
+//                    diameter = 0;
+//                    diameterList.push_back(snapshot.root->id);
+//                    snapshot.subtreeLeft.push_back(snapshot.root->id);
+//                    snapshot.subtreeRight.push_back(snapshot.root->id);
+//                    returnVal = snapshot.subtreeLeft;
+//                    continue;
+//                }
                 snapshot.stage = 1;
                 s.push(snapshot);
 
@@ -966,13 +987,13 @@ std::list<unsigned long> BinaryTreeOperations<T>::diameterPrint()
                     snapshot.subtreeRight = returnVal;
                 }
 
-                if(snapshot.heightLeft+snapshot.heightRight + 1 > diameter)
+                if(snapshot.heightLeft+snapshot.heightRight + 2 > diameter)
                 {
+                    diameter = snapshot.heightLeft + snapshot.heightRight + 2;
                     diameterList.clear();
                     diameterList.insert(diameterList.end(),snapshot.subtreeLeft.begin(),snapshot.subtreeLeft.end());
                     diameterList.push_back(snapshot.root->id);
                     diameterList.insert(diameterList.end(),snapshot.subtreeRight.rbegin(),snapshot.subtreeRight.rend());
-                    diameter = snapshot.heightLeft + snapshot.heightRight + 1;
                 }
 
                 if(snapshot.heightLeft>snapshot.heightRight)
@@ -1000,6 +1021,114 @@ std::list<unsigned long> BinaryTreeOperations<T>::diameterPrint()
     #endif // DEBUG
 
     return diameterList;
+}
+
+//Method to print all the paths from root to leaves
+template<class T>
+void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsigned long>&))
+{
+    if(this->root == nullptr)
+        return;
+
+    #ifdef DEBUG
+    unsigned long counter = 0;
+    #endif // DEBUG
+
+    typedef typename BinaryTree<T>::Node Node;
+
+    struct Snapshot
+    {
+        //input parameter
+        Node * root;
+
+        //local variable
+        std::deque<unsigned long>::iterator itr;
+
+        //stage
+        unsigned long stage = 0;
+    };
+
+    Snapshot snapshot;
+
+    snapshot.root = this->root;
+
+    std::stack<Snapshot> s;
+    s.push(snapshot);
+
+    std::deque<unsigned long> list;
+
+    while(!s.empty())
+    {
+        #ifdef DEBUG
+        counter++;
+        #endif // DEBUG
+
+        snapshot = s.top(); s.pop();
+
+        switch(snapshot.stage)
+        {
+            case 0:
+            {
+                list.push_back(snapshot.root->id);
+                if(snapshot.root->left == nullptr && snapshot.root->right == nullptr)
+                {
+                    process(list);
+                    continue;
+                }
+
+                snapshot.itr = list.end();
+                snapshot.itr--;
+                snapshot.stage = 1;
+                s.push(snapshot);
+
+                if(snapshot.root->left != nullptr)
+                {
+                    snapshot.root = snapshot.root->left;
+                    snapshot.itr = list.end();
+                    snapshot.stage = 0;
+                    s.push(snapshot);
+                }
+                continue;
+            }
+
+            case 1:
+            {
+                if(snapshot.root->left != nullptr)
+                {
+                    snapshot.itr++; //increment to point to next element
+                    snapshot.itr = list.erase(snapshot.itr,list.end());
+                    snapshot.itr--; // decrement to point to the current element
+                    snapshot.stage = 2;
+                    s.push(snapshot);
+                }
+
+                if(snapshot.root->right != nullptr)
+                {
+                    snapshot.root = snapshot.root -> right;
+                    snapshot.itr = list.end();
+                    snapshot.stage = 0;
+                    s.push(snapshot);
+                }
+                continue;
+            }
+
+            case 2:
+            {
+                if(snapshot.root->right != nullptr)
+                {
+                    snapshot.itr++;
+                    snapshot.itr = list.erase(snapshot.itr, list.end());
+                }
+                continue;
+            }
+        }
+
+    }
+
+    #ifdef DEBUG
+    std::cout<<std::endl<<"Number of Loops to print paths :: "<<counter<<std::endl;
+    #endif // DEBUG
+
 }
 
 #endif
