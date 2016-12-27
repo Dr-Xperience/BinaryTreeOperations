@@ -223,11 +223,14 @@ void BinaryTreeOperations<T>::traversePostOrderTraversal(void (*process)(T))
     typedef typename BinaryTree<T>::Node Node;
     struct Snapshot
     {
-        Node* root; //argument of Member Function
+        Node* root; //argument of Member Function except the reference and pointers
         //No memberFunctions Present
         unsigned long stage=0;
     };
 
+    //creating manual stack and initializing it
+    //by giving formal arguments/parameters in snapshot the actual arguments
+    //and setting stage to 0
     std::stack<Snapshot> s;
 
     Snapshot snapshot;
@@ -321,7 +324,7 @@ long BinaryTreeOperations<T>::heightDFS()
 
     struct Snapshot
     {
-        //Arguments to function
+        //Arguments to function except the reference and pointers
         Node* root;
         //Local Variables
         long leftHeight = -1 , rightHeight = -1;
@@ -329,8 +332,13 @@ long BinaryTreeOperations<T>::heightDFS()
         unsigned long stage = 0;
     };
 
+    //function arguments/parameters present as references or pointer
+    //plus returnVal as return value of the algorithm/function
     long returnVal = -1; //Default Return Value
 
+    //creating manual stack and initializing it
+    //by giving formal arguments/parameters in snapshot the actual arguments
+    //and setting stage to 0
     Snapshot snapshot;
 
     snapshot.root = this->root;
@@ -516,7 +524,7 @@ long BinaryTreeOperations<T>::diameterN2()
 
     struct Snapshot
     {
-        //function argument
+        //input parameters except the reference and pointers
         Node* root;
         //local variable
         long leftHeight = -1, rightHeight = -1,leftDiameter = -1,rightDiameter = -1;
@@ -524,7 +532,13 @@ long BinaryTreeOperations<T>::diameterN2()
         unsigned long stage=0;
     };
 
+    //function arguments/parameters present as references or pointer
+    //plus returnVal as return value of the algorithm/function
     long returnVal=-1;
+
+    //creating manual stack and initializing it
+    //by giving formal arguments/parameters in snapshot the actual arguments
+    //and setting stage to 0
 
     Snapshot snapshot;
 
@@ -735,7 +749,7 @@ long BinaryTreeOperations<T>::diameter()
 
     struct Snapshot
     {
-        //input parameters
+        //input parameters except the reference and pointers
         Node * root;
         //No need to make data member for diameter
         //because it is a reference
@@ -750,6 +764,15 @@ long BinaryTreeOperations<T>::diameter()
 
     };
 
+    //function arguments/parameters present as references or pointer
+    //plus returnVal as return value of the algorithm/function
+    long returnVal =-1;
+    long diameter = -1;
+
+    //creating manual stack and initializing it
+    //by giving formal arguments/parameters in snapshot the actual arguments
+    //and setting stage to 0
+
     Snapshot snapshot;
     snapshot.root=this->root;
     snapshot.heightLeft=snapshot.heightRight = -1;
@@ -758,8 +781,6 @@ long BinaryTreeOperations<T>::diameter()
     std::stack<Snapshot> s;
     s.push(snapshot);
 
-    long returnVal =-1;
-    long diameter = -1;
     while(!s.empty())
     {
         #ifdef DEBUG
@@ -843,8 +864,11 @@ std::deque<unsigned long> BinaryTreeOperations<T>::diameterPrint()
 {
     /**
 
-    std::deque<unsigned long> diameterPrint(Node * root, long &height, long &diameter, deque<long> &diameterList)
+    std::deque<unsigned long> diameterPrint(Node * root, long &height, long &diameter, deque<unsigned long> &diameterList)
     {
+        if(root == nullptr)
+            return std::deque<unsigned long>();
+
         long heightLeft = -1, heightRight = -1;
 
         std::deque<unsigned long> subtreeLeft, subtreeRight;
@@ -863,9 +887,9 @@ std::deque<unsigned long> BinaryTreeOperations<T>::diameterPrint()
         {
             diameter = heightLeft + heightRight + 2;
             diameterList.clear();
-            diameterList.insert(diameterList.begin(),subtreeLeft.begin(),subtreeLeft.end());
+            diameterList.insert(diameterList.end(),subtreeLeft.begin(),subtreeLeft.end());
             diameterList.push_back(root->id);
-            diameterList.insert(diameterList.begin(),subtreeRight,rbegin(),subtreeRight.rend());
+            diameterList.insert(diameterList.end(),subtreeRight,rbegin(),subtreeRight.rend());
         }
 
         if(heightLeft>heightRight)
@@ -896,7 +920,7 @@ std::deque<unsigned long> BinaryTreeOperations<T>::diameterPrint()
 
     struct Snapshot
     {
-        //input parameters except reference
+        //input parameters except the reference and pointers
         Node * root;
 
         //local variables
@@ -907,15 +931,21 @@ std::deque<unsigned long> BinaryTreeOperations<T>::diameterPrint()
         unsigned long stage=0;
     };
 
+    //function arguments/parameters present as references or pointer
+    //plus returnVal as return value of the algorithm/function
+    long height=-1, diameter=-1;
+    std::deque<unsigned long> diameterList,returnVal;
+
+    //creating manual stack and initializing it
+    //by giving formal arguments/parameters in snapshot the actual arguments
+    //and setting stage to 0
     Snapshot snapshot;
 
     snapshot.root = this->root;
+    //the stage is by default set to 0
 
     std::stack<Snapshot> s;
     s.push(snapshot);
-
-    long height=-1, diameter=-1;
-    std::deque<unsigned long> diameterList,returnVal;
 
     while(!s.empty())
     {
@@ -1020,6 +1050,9 @@ std::deque<unsigned long> BinaryTreeOperations<T>::diameterPrint()
     std::cout<<std::endl<<"Number of Loops to print diameter :: "<<counter<<std::endl;
     #endif // DEBUG
 
+    //since we want to return diameterList as result
+    //we will replace returnVal with diameterList
+    //return returnVal;
     return diameterList;
 }
 
@@ -1027,6 +1060,50 @@ std::deque<unsigned long> BinaryTreeOperations<T>::diameterPrint()
 template<class T>
 void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsigned long>&))
 {
+    /**
+
+    void pathPrint(Node* root, std::deque<unsigned long>& list)
+    {
+        if(root == nullptr)
+            return;
+
+        list.push_back(root->id);
+
+        if(root->left==nullptr && root->right==nullptr)
+        {
+            print(list);
+            return;
+        }
+
+        std::deque<unsigned long>::iterator itr;
+
+        itr = list.end();
+        itr--; //to move iterator from _M_Node to the last Node
+               //check gcc code ("C:\Home\Dr.Xperience\INNOVATE\dissertation\Progs\gcc source+ modified source+compile commands\libstdc++-v3\include\bits\stl_list.h")
+               //"C:\Home\Dr.Xperience\INNOVATE\dissertation\Progs\gcc source+ modified source+compile commands\libstdc++-v3\src\c++98\list.cc"
+
+        if(root->left != nullptr)
+        {
+            pathPrint(root->left,list);
+
+            //now move itr to next node after current
+            itr++;
+            itr = list.erase(itr,list.end()); //erase all nodes after current
+
+            //Now itr = last.end() i.e _M_Node
+            //We need to move it back to last element
+            itr--;
+        }
+
+        if(root->right != nullptr)
+        {
+            pathPrint(root->right,list);
+            itr++;
+            itr = list.erase(itr,list.end());
+            itr--;
+        }
+    }//end of function
+    **/
     if(this->root == nullptr)
         return;
 
@@ -1038,7 +1115,7 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
 
     struct Snapshot
     {
-        //input parameter
+        //input parameters except the reference and pointers
         Node * root;
 
         //local variable
@@ -1048,14 +1125,19 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
         unsigned long stage = 0;
     };
 
+    //function arguments/parameters present as references or pointer
+    //plus returnVal as return value of the algorithm/function
+    std::deque<unsigned long> list;
+
+    //creating manual stack and initializing it
+    //by giving formal arguments/parameters in snapshot the actual arguments
+    //and setting stage to 0
     Snapshot snapshot;
 
     snapshot.root = this->root;
 
     std::stack<Snapshot> s;
     s.push(snapshot);
-
-    std::deque<unsigned long> list;
 
     while(!s.empty())
     {
@@ -1128,7 +1210,6 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
     #ifdef DEBUG
     std::cout<<std::endl<<"Number of Loops to print paths :: "<<counter<<std::endl;
     #endif // DEBUG
-
 }
 
 #endif

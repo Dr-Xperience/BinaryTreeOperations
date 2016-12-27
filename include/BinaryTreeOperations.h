@@ -52,10 +52,13 @@ class BinaryTreeOperations:public BinaryTree<T>
         long diameter();
 
         //Method to return the nodes of diameter in linked list
+        //Complexity O(N*M), where N= total number of nodes and M is twice the no. of levels of tree
         std::deque<unsigned long> diameterPrint();
 
         //To print the all the path to leave nodes
+        //Complexity O(N*M), where N= total number of nodes and M is total no. of levels of the tree
         void pathToLeavesPrint(void (*process)(std::deque<unsigned long>&));
+
 
 
     protected:
