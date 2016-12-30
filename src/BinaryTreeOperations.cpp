@@ -223,16 +223,19 @@ void BinaryTreeOperations<T>::traversePostOrderTraversal(void (*process)(T))
     typedef typename BinaryTree<T>::Node Node;
     struct Snapshot
     {
-        Node* root; //argument of Member Function except the reference and pointers
+        //formal argument of Member Function except the reference and pointers
+        Node* root;
         //No memberFunctions Present
         unsigned long stage=0;
     };
 
-    //creating manual stack and initializing it
-    //by giving formal arguments/parameters in snapshot the actual arguments
-    //and setting stage to 0
+
+
+    //Creating manual function stack
     std::stack<Snapshot> s;
 
+    //Creating function call by passing actual argument to formal arguments present in the snapshot
+    //and setting stage to 0
     Snapshot snapshot;
 
     snapshot.root=this->root;
@@ -256,10 +259,13 @@ void BinaryTreeOperations<T>::traversePostOrderTraversal(void (*process)(T))
                     continue;
 
                 snapshot.stage=1;
+
                 s.push(snapshot);
 
                 if(snapshot.root->left != nullptr)
                 {
+                    //Creating function call by passing actual argument to formal arguments
+                    //and setting stage to 0
                     snapshot.root=snapshot.root->left;
                     snapshot.stage=0;
                     s.push(snapshot);
@@ -269,19 +275,31 @@ void BinaryTreeOperations<T>::traversePostOrderTraversal(void (*process)(T))
 
             case 1:
             {
+                //in stage 1 variable returnVal holds the return value
+                //from the function call creation made after setting stage=1 and s.push(snapshot)
+                //and any local variable in snapshot passed by reference/pointer during function call
+                //will receive value from formal parameters created as reference/pointer
                 snapshot.stage=2;
+
                 s.push(snapshot);
 
                 if(snapshot.root->right != nullptr)
                 {
+                    //Creating function call by passing actual argument to formal arguments
+                    //and setting stage to 0
                     snapshot.root=snapshot.root->right;
                     snapshot.stage=0;
+
                     s.push(snapshot);
                 }
                 continue;
             }
             case 2:
             {
+                //in stage 2 variable returnVal holds the return value
+                //from the function call creation made after setting stage=2 and s.push(snapshot)
+                //and any local variable in snapshot passed by reference/pointer during function call
+                //will receive value from formal parameters created as reference/pointer
                 process(snapshot.root->data);
                 continue;
             }
@@ -324,7 +342,7 @@ long BinaryTreeOperations<T>::heightDFS()
 
     struct Snapshot
     {
-        //Arguments to function except the reference and pointers
+        //Formal Arguments of function except the reference and pointers
         Node* root;
         //Local Variables
         long leftHeight = -1 , rightHeight = -1;
@@ -332,12 +350,11 @@ long BinaryTreeOperations<T>::heightDFS()
         unsigned long stage = 0;
     };
 
-    //function arguments/parameters present as references or pointer
+    //function formal arguments/parameters present as references or pointer
     //plus returnVal as return value of the algorithm/function
     long returnVal = -1; //Default Return Value
 
-    //creating manual stack and initializing it
-    //by giving formal arguments/parameters in snapshot the actual arguments
+    //Creating function call by passing actual argument to formal arguments present in the snapshot
     //and setting stage to 0
     Snapshot snapshot;
 
@@ -345,7 +362,10 @@ long BinaryTreeOperations<T>::heightDFS()
     snapshot.leftHeight=snapshot.rightHeight=-1;
     snapshot.stage=0;
 
-    std::stack<Snapshot>s;
+    //Creating manual function stack
+    std::stack<Snapshot> s;
+
+    //simulating function call by pushing the snapshot to s
     s.push(snapshot);
 
     while(!s.empty())
@@ -366,14 +386,21 @@ long BinaryTreeOperations<T>::heightDFS()
                     continue;
                 }
 
+                //updating the status of local variable if any
+                //and pushing the snapshot to stage 1
+                //i.e. code to be called after function returns from its first call
                 snapshot.stage=1;
+
                 s.push(snapshot);
 
                 if(snapshot.root->left != nullptr)
                 {
-                    snapshot.root= snapshot.root->left;
+                    //Creating function call by passing actual argument to formal arguments
+                    //and setting stage to 0
+                    snapshot.root=snapshot.root->left;
                     snapshot.leftHeight=snapshot.rightHeight=-1;
                     snapshot.stage=0;
+
                     s.push(snapshot);
                 }
                 else
@@ -384,15 +411,23 @@ long BinaryTreeOperations<T>::heightDFS()
 
             case 1:
             {
+                //in stage 1 variable returnVal holds the return value
+                //from the function call creation made after setting stage=1 and s.push(snapshot)
+                //and any local variable in snapshot passed by reference/pointer during function call
+                //will receive value from formal parameters created as reference/pointer
                 snapshot.leftHeight = returnVal;
                 snapshot.stage=2;
                 s.push(snapshot);
 
                 if(snapshot.root->right != nullptr)
                 {
-                    snapshot.root = snapshot.root->right;
+
+                    //Creating function call by passing actual argument to formal arguments
+                    //and setting stage to 0
+                    snapshot.root=snapshot.root->right;
                     snapshot.leftHeight=snapshot.rightHeight=-1;
                     snapshot.stage=0;
+
                     s.push(snapshot);
                 }
                 else
@@ -403,6 +438,10 @@ long BinaryTreeOperations<T>::heightDFS()
 
             case 2:
             {
+                //in stage 2 variable returnVal holds the return value
+                //from the function call creation made after setting stage=2 and s.push(snapshot)
+                //and any local variable in snapshot passed by reference/pointer during function call
+                //will receive value from formal parameters created as reference/pointer
                 snapshot.rightHeight=returnVal;
 
                 if(snapshot.leftHeight>snapshot.rightHeight)
@@ -524,7 +563,7 @@ long BinaryTreeOperations<T>::diameterN2()
 
     struct Snapshot
     {
-        //input parameters except the reference and pointers
+        //Formal parameters except the reference and pointers
         Node* root;
         //local variable
         long leftHeight = -1, rightHeight = -1,leftDiameter = -1,rightDiameter = -1;
@@ -532,24 +571,26 @@ long BinaryTreeOperations<T>::diameterN2()
         unsigned long stage=0;
     };
 
-    //function arguments/parameters present as references or pointer
+    //function formal arguments/parameters present as references or pointer
     //plus returnVal as return value of the algorithm/function
     long returnVal=-1;
 
-    //creating manual stack and initializing it
-    //by giving formal arguments/parameters in snapshot the actual arguments
+    //Creating function call by passing actual argument to formal arguments present in the snapshot
     //and setting stage to 0
-
     Snapshot snapshot;
 
     snapshot.root = this->root;
     snapshot.leftHeight=snapshot.rightHeight=snapshot.leftDiameter=snapshot.rightDiameter=-1;
     snapshot.stage=0;
 
+    //Creating manual function stack
     std::stack<Snapshot> s;
 
+    //simulating function call by pushing the snapshot to s
     s.push(snapshot);
+
     Node* temp = this->root;
+
     while(!s.empty())
     {
         #ifdef DEBUG
@@ -573,14 +614,21 @@ long BinaryTreeOperations<T>::diameterN2()
                 this->root=snapshot.root->right;
                 snapshot.rightHeight = this->heightDFS();
 
+                //updating the status of local variable if any
+                //and pushing the snapshot to stage 1
+                //i.e. code to be called after function returns from its first call
                 snapshot.stage=1;
+
                 s.push(snapshot);
 
                 if(snapshot.root->left != nullptr)
                 {
-                    snapshot.root = snapshot.root->left;
+                    //Creating function call by passing actual argument to formal arguments
+                    //and setting stage to 0
+                    snapshot.root=snapshot.root->left;
                     snapshot.leftHeight=snapshot.rightHeight=snapshot.leftDiameter=snapshot.rightDiameter=-1;
                     snapshot.stage=0;
+
                     s.push(snapshot);
                 }
                 else
@@ -591,15 +639,23 @@ long BinaryTreeOperations<T>::diameterN2()
 
             case 1:
             {
+                //in stage 1 variable returnVal holds the return value
+                //from the function call creation made after setting stage=1 and s.push(snapshot)
+                //and any local variable in snapshot passed by reference/pointer during function call
+                //will receive value from formal parameters created as reference/pointer
                 snapshot.leftDiameter=returnVal;
                 snapshot.stage=2;
+
                 s.push(snapshot);
 
                 if(snapshot.root->right != nullptr)
                 {
-                    snapshot.root = snapshot.root->right;
+                    //Creating function call by passing actual argument to formal arguments
+                    //and setting stage to 0
+                    snapshot.root=snapshot.root->right;
                     snapshot.leftHeight=snapshot.rightHeight=snapshot.leftDiameter=snapshot.rightDiameter=-1;
                     snapshot.stage=0;
+
                     s.push(snapshot);
                 }
                 else
@@ -610,6 +666,10 @@ long BinaryTreeOperations<T>::diameterN2()
 
             case 2:
             {
+                //in stage 2 variable returnVal holds the return value
+                //from the function call creation made after setting stage=2 and s.push(snapshot)
+                //and any local variable in snapshot passed by reference/pointer during function call
+                //will receive value from formal parameters created as reference/pointer
                 snapshot.rightDiameter=returnVal;
 //                 #ifdef DEBUG
 //                    std::cout<<"\n snapshot.leftHeight = "<<snapshot.leftHeight<<std::endl;
@@ -721,7 +781,7 @@ long BinaryTreeOperations<T>::diameter()
               *diameter = heightLeft + heightRight + 2;
 
                    //OR
-                   //*diameter = Max(heightLeft+heightRight+2,*diameter);
+                   // *diameter = Max(heightLeft+heightRight+2,*diameter);
 
             // So, the above comparison while in right subtree
             // will compare current diameter with the one
@@ -749,7 +809,7 @@ long BinaryTreeOperations<T>::diameter()
 
     struct Snapshot
     {
-        //input parameters except the reference and pointers
+        //Formal parameters except the reference and pointers
         Node * root;
         //No need to make data member for diameter
         //because it is a reference
@@ -764,21 +824,22 @@ long BinaryTreeOperations<T>::diameter()
 
     };
 
-    //function arguments/parameters present as references or pointer
+    //function formal arguments/parameters present as references or pointer
     //plus returnVal as return value of the algorithm/function
     long returnVal =-1;
     long diameter = -1;
 
-    //creating manual stack and initializing it
-    //by giving formal arguments/parameters in snapshot the actual arguments
+    //Creating function call by passing actual argument to formal arguments present in the snapshot
     //and setting stage to 0
-
     Snapshot snapshot;
     snapshot.root=this->root;
     snapshot.heightLeft=snapshot.heightRight = -1;
     snapshot.stage = 0;
 
+    //Creating manual function stack
     std::stack<Snapshot> s;
+
+    //simulating function call by pushing the snapshot to s
     s.push(snapshot);
 
     while(!s.empty())
@@ -799,14 +860,22 @@ long BinaryTreeOperations<T>::diameter()
                      returnVal = -1;
                      continue;
                   }
-                snapshot.stage = 1;
+
+                //updating the status of local variable if any
+                //and pushing the snapshot to stage 1
+                //i.e. code to be called after function returns from its first call
+                snapshot.stage=1;
+
                 s.push(snapshot);
 
                 if(snapshot.root->left != nullptr)
                 {
-                    snapshot.root = snapshot.root->left;
+                    //Creating function call by passing actual argument to formal arguments
+                    //and setting stage to 0
+                    snapshot.root=snapshot.root->left;
                     snapshot.heightLeft=snapshot.heightRight=-1;
                     snapshot.stage=0;
+
                     s.push(snapshot);
                 }
                 else
@@ -817,15 +886,23 @@ long BinaryTreeOperations<T>::diameter()
 
             case(1):
             {
+                //in stage 1 variable returnVal holds the return value
+                //from the function call creation made after setting stage=1 and s.push(snapshot)
+                //and any local variable in snapshot passed by reference/pointer during function call
+                //will receive value from formal parameters created as reference/pointer
                 snapshot.heightLeft = returnVal;
                 snapshot.stage = 2;
+
                 s.push(snapshot);
 
                 if(snapshot.root->right != nullptr)
                 {
-                    snapshot.root = snapshot.root->right;
+                    //Creating function call by passing actual argument to formal arguments
+                    //and setting stage to 0
+                    snapshot.root=snapshot.root->right;
                     snapshot.heightLeft=snapshot.heightRight=-1;
                     snapshot.stage=0;
+
                     s.push(snapshot);
                 }
                 else
@@ -836,6 +913,10 @@ long BinaryTreeOperations<T>::diameter()
 
             case(2):
             {
+                //in stage 2 variable returnVal holds the return value
+                //from the function call creation made after setting stage=2 and s.push(snapshot)
+                //and any local variable in snapshot passed by reference/pointer during function call
+                //will receive value from formal parameters created as reference/pointer
                 snapshot.heightRight = returnVal;
 
                 diameter = Max(snapshot.heightLeft+snapshot.heightRight+2,diameter);
@@ -931,20 +1012,22 @@ std::deque<unsigned long> BinaryTreeOperations<T>::diameterPrint()
         unsigned long stage=0;
     };
 
-    //function arguments/parameters present as references or pointer
+    //function formal arguments/parameters present as references or pointer
     //plus returnVal as return value of the algorithm/function
     long height=-1, diameter=-1;
     std::deque<unsigned long> diameterList,returnVal;
 
-    //creating manual stack and initializing it
-    //by giving formal arguments/parameters in snapshot the actual arguments
+    //Creating function call by passing actual argument to formal arguments present in the snapshot
     //and setting stage to 0
     Snapshot snapshot;
 
     snapshot.root = this->root;
     //the stage is by default set to 0
 
+    //Creating manual function stack
     std::stack<Snapshot> s;
+
+    //simulating function call by pushing the snapshot to s
     s.push(snapshot);
 
     while(!s.empty())
@@ -969,16 +1052,24 @@ std::deque<unsigned long> BinaryTreeOperations<T>::diameterPrint()
 //                    returnVal = snapshot.subtreeLeft;
 //                    continue;
 //                }
-                snapshot.stage = 1;
+
+                //updating the status of local variable if any
+                //and pushing the snapshot to stage 1
+                //i.e. code to be called after function returns from its first call
+                snapshot.stage=1;
+
                 s.push(snapshot);
 
                 if(snapshot.root->left != nullptr)
                 {
-                    snapshot.root = snapshot.root->left;
+                    //Creating function call by passing actual argument to formal arguments
+                    //and setting stage to 0
+                    snapshot.root=snapshot.root->left;
                     snapshot.heightLeft=snapshot.heightRight=-1;
                     snapshot.subtreeLeft.clear();
                     snapshot.subtreeRight.clear();
                     snapshot.stage = 0;
+
                     s.push(snapshot);
                 }
 
@@ -987,23 +1078,33 @@ std::deque<unsigned long> BinaryTreeOperations<T>::diameterPrint()
 
             case 1:
             {
+                //in stage 1 variable returnVal holds the return value
+                //from the function call creation made after setting stage=1 and s.push(snapshot)
+                //and any local variable in snapshot passed by reference/pointer during function call
+                //will receive value from formal parameters created as reference/pointer
                 if(snapshot.root->left != nullptr)
                 {
+                    //in this case snapshot.heightRight was passed as reference during function call in algorithm
+                    //this will get its value from height which is formal parameter created as reference
                     snapshot.heightLeft = height;
                     snapshot.subtreeLeft = returnVal;
                 }
 
                 snapshot.stage = 2;
+
                 s.push(snapshot);
 
 
                 if(snapshot.root->right != nullptr)
                 {
-                    snapshot.root = snapshot.root->right;
+                    //Creating function call by passing actual argument to formal arguments
+                    //and setting stage to 0
+                    snapshot.root=snapshot.root->right;
                     snapshot.heightLeft=snapshot.heightRight=-1;
                     snapshot.subtreeLeft.clear();
                     snapshot.subtreeRight.clear();
                     snapshot.stage = 0;
+
                     s.push(snapshot);
                 }
                 continue;
@@ -1011,8 +1112,14 @@ std::deque<unsigned long> BinaryTreeOperations<T>::diameterPrint()
 
             case 2:
             {
+                //in stage 2 variable returnVal holds the return value
+                //from the function call creation made after setting stage=2 and s.push(snapshot)
+                //and any local variable in snapshot passed by reference/pointer during function call
+                //will receive value from formal parameters created as reference/pointer
                 if(snapshot.root->right != nullptr)
                 {
+                    //in this case snapshot.heightRight was passed as reference during function call in algorithm
+                    //this will get its value from height which is formal parameter created as reference
                     snapshot.heightRight = height;
                     snapshot.subtreeRight = returnVal;
                 }
@@ -1125,18 +1232,20 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
         unsigned long stage = 0;
     };
 
-    //function arguments/parameters present as references or pointer
+    //function formal arguments/parameters present as references or pointer
     //plus returnVal as return value of the algorithm/function
     std::deque<unsigned long> list;
 
-    //creating manual stack and initializing it
-    //by giving formal arguments/parameters in snapshot the actual arguments
+    //Creating function call by passing actual argument to formal arguments present in the snapshot
     //and setting stage to 0
     Snapshot snapshot;
 
     snapshot.root = this->root;
 
+    //Creating manual function stack
     std::stack<Snapshot> s;
+
+    //simulating function call by pushing the snapshot to s
     s.push(snapshot);
 
     while(!s.empty())
@@ -1160,14 +1269,22 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
 
                 snapshot.itr = list.end();
                 snapshot.itr--;
-                snapshot.stage = 1;
+
+                //updating the status of local variable if any
+                //and pushing the snapshot to stage 1
+                //i.e. code to be called after function returns from its first call
+                snapshot.stage=1;
+
                 s.push(snapshot);
 
                 if(snapshot.root->left != nullptr)
                 {
-                    snapshot.root = snapshot.root->left;
+                    //Creating function call by passing actual argument to formal arguments
+                    //and setting stage to 0
+                    snapshot.root=snapshot.root->left;
                     snapshot.itr = list.end();
                     snapshot.stage = 0;
+
                     s.push(snapshot);
                 }
                 continue;
@@ -1175,18 +1292,25 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
 
             case 1:
             {
+                //in stage 1 variable returnVal holds the return value
+                //from the function call creation made after setting stage=1 and s.push(snapshot)
+                //and any local variable in snapshot passed by reference/pointer during function call
+                //will receive value from formal parameters created as reference/pointer
                 if(snapshot.root->left != nullptr)
                 {
                     snapshot.itr++; //increment to point to next element
                     snapshot.itr = list.erase(snapshot.itr,list.end());
                     snapshot.itr--; // decrement to point to the current element
                     snapshot.stage = 2;
+
                     s.push(snapshot);
                 }
 
                 if(snapshot.root->right != nullptr)
                 {
-                    snapshot.root = snapshot.root -> right;
+                    //Creating function call by passing actual argument to formal arguments
+                    //and setting stage to 0
+                    snapshot.root = snapshot.root->right;
                     snapshot.itr = list.end();
                     snapshot.stage = 0;
                     s.push(snapshot);
@@ -1196,6 +1320,10 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
 
             case 2:
             {
+                //in stage 2 variable returnVal holds the return value
+                //from the function call creation made after setting stage=2 and s.push(snapshot)
+                //and any local variable in snapshot passed by reference/pointer during function call
+                //will receive value from formal parameters created as reference/pointer
                 if(snapshot.root->right != nullptr)
                 {
                     snapshot.itr++;
@@ -1212,4 +1340,135 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
     #endif // DEBUG
 }
 
+//Function to check whether sum of node->data values in a path from root to any node in a tree equals a given value
+template <class T>
+int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
+{
+    /**
+    //Algorithm
+
+    int isSumEqualsToDataSum(Node* root, unsigned long sum)
+    {
+        if(root == nullptr)
+            return -1;
+        sum = sum - (root->id);
+
+        if(root->left == nullptr && root->right == nullptr)
+        {
+            return (sum == 0);
+        }
+
+        if(root->left != nullptr && sum > 0)
+        {
+            if(isSumEqualsToDataSum(root->left,sum) == 1)
+                return 1;
+        }
+
+        if(root->right != nullptr && sum > 0)
+        {
+            if(isSumEqualsToDataSum(root->right,sum) == 1)
+                return 1;
+        }
+
+        return (sum == 0) 1 : 0;
+
+        //Alternate if the object to check whether the path from root to leave is equal to sum
+        //rather than root to any node
+        //then, change return from "return (sum == 0) 1 : 0;" to "return 0;"
+    }
+    **/
+
+    if(this->root == nullptr)
+        return -1;
+
+    #ifdef DEBUG
+    unsigned long counter =0;
+    #endif // DEBUG
+
+    typedef typename BinaryTree<T>::Node Node;
+    struct Snapshot
+    {
+        //formal parameters except any reference or pointer arguments
+        Node * root;
+        unsigned long sum;
+
+        //local variables in function
+        //none for this algo
+
+        //stage of algorithm
+        unsigned long stage = 0;
+    };
+
+
+    //references or pointers in formal parameters of function if any
+    //none in this case
+
+    //return value of function as returnVal initialized with default return value
+    int returnVal = 0;
+
+    //Creating manual function stack
+    std::stack<Snapshot> s;
+
+    //Creating function call i.e isSumEqualsToDataSum(root,5);
+    //by passing actual argument to formal arguments present in the snapshot
+    Snapshot snapshot;
+    snapshot.root = this->root;
+    snapshot.sum = sum;
+
+    //stage is by default set to 0 so no need to set it to zero
+
+    s.push(snapshot);
+
+    while(s.empty())
+    {
+        snapshot = s.top(); s.pop();
+
+        switch(snapshot.stage)
+        {
+            case 0:
+            {
+                snapshot.sum = snapshot.sum - (snapshot.root -> id);
+
+                if(snapshot.root->left == nullptr && snapshot.root->right == nullptr)
+                {
+                    returnVal = (snapshot.sum == 0)? 1 : 0;
+                    continue;
+                }
+
+                //updating the status of local variable if any
+                //and pushing the snapshot to stage 1
+                //i.e. code to be called after function returns from its first call
+                snapshot.stage=1;
+
+                s.push(snapshot);
+
+                if(snapshot.root->left == nullptr && snapshot.sum > 0)
+                {
+                    //Creating function call by passing actual argument to formal arguments
+                    //and setting stage to 0
+                    snapshot.root=snapshot.root->left;
+                   // snapshot.sum = snapshot.sum;
+                    snapshot.stage = 0;
+
+                    s.push(snapshot);
+                }
+
+                continue;
+            }
+
+            case 1:
+            {
+                //in stage 1 variable returnVal holds the return value
+                //from the function call creation made after setting stage=1 and s.push(snapshot)
+                //and any local variable in snapshot passed by reference/pointer during function call
+                //will receive value from formal parameters created as reference/pointer
+            }
+        }
+    }
+
+
+    #ifdef DEBUG
+    std::cout<<std::endl<<"Number of Loops to check Sum of path :: "<<counter<<std::endl;
+    #endif // DEBUG
+}
 #endif

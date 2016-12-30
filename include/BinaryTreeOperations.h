@@ -60,6 +60,9 @@ class BinaryTreeOperations:public BinaryTree<T>
         void pathToLeavesPrint(void (*process)(std::deque<unsigned long>&));
 
 
+        //To check whether the sum of node->data in a path from root to any node in a tree equals a given sum value
+        int isSumEqualsToDataSum(unsigned long sum);
+
 
     protected:
         void preOrderRec(void (*process)(T),typename BinaryTree<T>::Node * node);

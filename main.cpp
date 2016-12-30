@@ -132,7 +132,8 @@ int main()
     std::cout<<"\nVirtual Memory Used by Process  (MB):: "<<static_cast<float>(virtualMemUsedByMe)/1024/1024<<std::endl;
     std::cout<<"Physical Memory Used by Process (MB):: "<<static_cast<float>(physMemUsedByMe)/1024/1024<<std::endl;
 
-    return 0;
+    int a = 1;
+    return (a==1)?0:1;
 }
 
 std::string interactive(long id,bool& skip, bool& cont)
