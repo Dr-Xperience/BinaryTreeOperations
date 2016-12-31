@@ -33,9 +33,11 @@ using namespace std;
 
 void process(std::string);
 std::string process(long id,bool& skip, bool& cont);
+void process(unsigned int);
 void process(long);
-void print(std::deque<unsigned long>&);
-void print(std::string,bool,bool);
+void print(std::deque<unsigned long>& list);
+void print(std::string data,bool newLine, bool leaveNode);
+void print(unsigned int data,bool newLine, bool leaveNode);
 std::string interactive(long id,bool& skip, bool& cont);
 void MemoryBenchmark();
 void MemoryBenchmarkWithInsert();
@@ -56,21 +58,19 @@ int main()
     BinaryTreeOperations<std::string> b("1");
 
     std::deque<std::string> input;
-    for(int i=2; i<=1; ++i)
+    for(int i=2; i<=25; ++i)
     {
-        // n^2 complexity oh boy
-//        b.insert(std::to_string(i));
-          input.push_back(std::to_string(i));
-//        std::cout<<" i = "<<i<<std::endl;
+        input.push_back(std::to_string(i));
     }
     b.insert(input);
 
-
-    std::cout<<std::endl<<"Level Order Traversal :: ";
-//        b.traverseLevelOrder(process);
-    b.printLevelOrder(print);
-
-    std::cout<<std::endl<<"Post Order Traversal :: ";
+//    std::cout<<std::endl<<"Tree :"<<std::endl;
+//    b.printLevelOrder(print);
+//
+//    std::cout<<std::endl<<"Level Order Traversal :: ";
+//    b.traverseLevelOrder();
+//
+//    std::cout<<std::endl<<"Post Order Traversal :: ";
 //    b.traversePostOrderTraversal(process);
 
     std::cout<<std::endl<<"Height of Tree DFS :: "<<b.heightDFS()<<std::endl;
@@ -84,6 +84,9 @@ int main()
 
     std::cout<<"Print all the paths to the leaves"<<std::endl;
     b.pathToLeavesPrint(print);
+
+    std::cout<<"Is there exist a path with sum = 3 :: "<<b.isSumEqualsToDataSum(3)<<std::endl;
+
 
     /** Creating tree for checking Diameter of Tree which doesn't pass through root
      Tree be like of form
@@ -101,12 +104,14 @@ int main()
     **/
 
     b.clear();
-//    BinaryTreeOperations<std::string> b1;
 
     b.insertInteractive(process);
 
-    std::cout<<std::endl<<"Level Order Traversal :: ";
+    std::cout<<std::endl<<"Tree :"<<std::endl;
     b.printLevelOrder(print);
+
+    std::cout<<std::endl<<"Level Order Traversal :: ";
+    b.traverseLevelOrder(process);
 
     std::cout<<std::endl<<"Post Order Traversal :: ";
     b.traversePostOrderTraversal(process);
@@ -122,8 +127,24 @@ int main()
 //    shortcut to print list on ostream
     std::copy(list.begin(),list.end(),std::ostream_iterator<unsigned long>(std::cout," "));
     std::cout<<std::endl;
-//    b.clear();
-//
+    b.clear();
+
+    BinaryTreeOperations<unsigned int> b1;
+
+    for(int i=1; i<=1; ++i)
+    {
+        // n^2 complexity oh boy
+        b1.insert(i);
+    }
+
+    std::cout<<std::endl<<"Tree :"<<std::endl;
+    b1.printLevelOrder(print);
+    std::cout<<std::endl<<"Level Order Traversal :: ";
+    b1.traverseLevelOrder(process);
+
+    std::cout<<"\nIs there exist a path with sum = 1 :: "<<b1.isSumEqualsToDataSum(1)<<std::endl;
+
+
     PROCESS_MEMORY_COUNTERS_EX pmc;
     GetProcessMemoryInfo(GetCurrentProcess(),(PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
     SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
@@ -173,6 +194,10 @@ void process(std::string data)
     std::cout<<data<<" ";
 }
 
+void process(unsigned int data)
+{
+    std::cout<<data<<" ";
+}
 std::string process(long id,bool& skip,bool& cont)
 {
     cont = true;
@@ -180,27 +205,27 @@ std::string process(long id,bool& skip,bool& cont)
 
     switch (id)
     {
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 8:
-        case 10:
-        case 16:
-        {
-             return std::to_string(id);
-        }
-        case 21:
-        {
-            cont=false;
-            return std::to_string(id);
-        }
-        default:
-        {
-          skip = true;
-          return std::string();
-        }
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 8:
+    case 10:
+    case 16:
+    {
+        return std::to_string(id);
+    }
+    case 21:
+    {
+        cont=false;
+        return std::to_string(id);
+    }
+    default:
+    {
+        skip = true;
+        return std::string();
+    }
     }
 
 //    return std;
@@ -214,6 +239,19 @@ void print(std::deque<unsigned long>& list)
 }
 
 void print(std::string data,bool newLine, bool leaveNode)
+{
+    if(leaveNode == true)
+        std::cout<<"N"<<" ";
+    else if(newLine == false)
+    {
+
+        std::cout<<data<<" ";
+    }
+    else
+        std::cout<<std::endl;
+}
+
+void print(unsigned int data,bool newLine, bool leaveNode)
 {
     if(leaveNode == true)
         std::cout<<"N"<<" ";

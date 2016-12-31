@@ -279,6 +279,10 @@ void BinaryTreeOperations<T>::traversePostOrderTraversal(void (*process)(T))
                 //from the function call creation made after setting stage=1 and s.push(snapshot)
                 //and any local variable in snapshot passed by reference/pointer during function call
                 //will receive value from formal parameters created as reference/pointer
+
+                //updating the status of local variable if any
+                //and pushing the snapshot to stage 2
+                //i.e. code to be called after function returns from its first call
                 snapshot.stage=2;
 
                 s.push(snapshot);
@@ -416,6 +420,10 @@ long BinaryTreeOperations<T>::heightDFS()
                 //and any local variable in snapshot passed by reference/pointer during function call
                 //will receive value from formal parameters created as reference/pointer
                 snapshot.leftHeight = returnVal;
+
+                //updating the status of local variable if any
+                //and pushing the snapshot to stage 2
+                //i.e. code to be called after function returns from its first call
                 snapshot.stage=2;
                 s.push(snapshot);
 
@@ -644,6 +652,10 @@ long BinaryTreeOperations<T>::diameterN2()
                 //and any local variable in snapshot passed by reference/pointer during function call
                 //will receive value from formal parameters created as reference/pointer
                 snapshot.leftDiameter=returnVal;
+
+                //updating the status of local variable if any
+                //and pushing the snapshot to stage 2
+                //i.e. code to be called after function returns from its first call
                 snapshot.stage=2;
 
                 s.push(snapshot);
@@ -671,14 +683,10 @@ long BinaryTreeOperations<T>::diameterN2()
                 //and any local variable in snapshot passed by reference/pointer during function call
                 //will receive value from formal parameters created as reference/pointer
                 snapshot.rightDiameter=returnVal;
-//                 #ifdef DEBUG
-//                    std::cout<<"\n snapshot.leftHeight = "<<snapshot.leftHeight<<std::endl;
-//                    std::cout<<"\n snapshot.rightHeight = "<<snapshot.rightHeight<<std::endl;
-//                 #endif // DEBUG
+
                 returnVal = Max(snapshot.leftHeight+snapshot.rightHeight+2,Max(snapshot.leftDiameter,snapshot.rightDiameter));
                 continue;
             }
-
         }
     }
 
@@ -891,6 +899,10 @@ long BinaryTreeOperations<T>::diameter()
                 //and any local variable in snapshot passed by reference/pointer during function call
                 //will receive value from formal parameters created as reference/pointer
                 snapshot.heightLeft = returnVal;
+
+                //updating the status of local variable if any
+                //and pushing the snapshot to stage 2
+                //i.e. code to be called after function returns from its first call
                 snapshot.stage = 2;
 
                 s.push(snapshot);
@@ -1090,6 +1102,9 @@ std::deque<unsigned long> BinaryTreeOperations<T>::diameterPrint()
                     snapshot.subtreeLeft = returnVal;
                 }
 
+                //updating the status of local variable if any
+                //and pushing the snapshot to stage 2
+                //i.e. code to be called after function returns from its first call
                 snapshot.stage = 2;
 
                 s.push(snapshot);
@@ -1301,6 +1316,10 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
                     snapshot.itr++; //increment to point to next element
                     snapshot.itr = list.erase(snapshot.itr,list.end());
                     snapshot.itr--; // decrement to point to the current element
+
+                    //updating the status of local variable if any
+                    //and pushing the snapshot to stage 2
+                    //i.e. code to be called after function returns from its first call
                     snapshot.stage = 2;
 
                     s.push(snapshot);
@@ -1340,8 +1359,14 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
     #endif // DEBUG
 }
 
+template <class T> template<typename TT, typename std::enable_if<!(std::is_same<float,TT>::value||std::is_same<double,TT>::value||std::is_same<unsigned int,TT>::value||std::is_same<unsigned long,TT>::value)>::type * a>
+int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
+{
+    return -1;
+}
+
 //Function to check whether sum of node->data values in a path from root to any node in a tree equals a given value
-template <class T>
+template <class T> template<typename TT, typename std::enable_if<std::is_same<float,TT>::value||std::is_same<double,TT>::value||std::is_same<unsigned int,TT>::value||std::is_same<unsigned long,TT>::value>::type * a>
 int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
 {
     /**
@@ -1351,7 +1376,7 @@ int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
     {
         if(root == nullptr)
             return -1;
-        sum = sum - (root->id);
+        sum = sum - (root->data);
 
         if(root->left == nullptr && root->right == nullptr)
         {
@@ -1375,9 +1400,50 @@ int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
         //Alternate if the object to check whether the path from root to leave is equal to sum
         //rather than root to any node
         //then, change return from "return (sum == 0) 1 : 0;" to "return 0;"
+
     }
     **/
 
+    /**
+
+    //Test cases
+
+    1. Given Tree : nullptr
+
+        a.      Input : sum = anything
+                Output : -1
+
+    2.  Given Tree : "1#2@3#4@5@6@7#", Where @ mean new node and # end of level and 1,2,3 are non numeric literals
+
+        a.      Input : sum = anything
+                Output : -1
+
+    3.  Given Tree : "1#2@3#4@5@6@7#", Where @ mean new node and # end of level and 1,2,3 are numeric literals
+
+        a.      Input : sum = 0
+                Output : 0
+
+        b.      Input : sum = 2
+                Output : 0
+
+        c.      Input : sum = 3
+                Output : 1
+
+        d.      Input : sum = 7
+                Output : 1
+
+        e.      Input : sum = 8
+                Output : 8
+
+    4.  Given Tree : "1#", Where @ mean new node and # end of level and 1,2,3 are numeric literals
+
+        a.      Input : sum = 1
+                Output : 1
+
+        b.      Input : sum = 8
+                Output : 0
+
+    **/
     if(this->root == nullptr)
         return -1;
 
@@ -1419,7 +1485,7 @@ int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
 
     s.push(snapshot);
 
-    while(s.empty())
+    while(!s.empty())
     {
         snapshot = s.top(); s.pop();
 
@@ -1427,7 +1493,7 @@ int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
         {
             case 0:
             {
-                snapshot.sum = snapshot.sum - (snapshot.root -> id);
+                snapshot.sum = snapshot.sum - (snapshot.root -> data);
 
                 if(snapshot.root->left == nullptr && snapshot.root->right == nullptr)
                 {
@@ -1442,7 +1508,7 @@ int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
 
                 s.push(snapshot);
 
-                if(snapshot.root->left == nullptr && snapshot.sum > 0)
+                if(snapshot.root->left != nullptr && snapshot.sum > 0)
                 {
                     //Creating function call by passing actual argument to formal arguments
                     //and setting stage to 0
@@ -1462,13 +1528,66 @@ int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
                 //from the function call creation made after setting stage=1 and s.push(snapshot)
                 //and any local variable in snapshot passed by reference/pointer during function call
                 //will receive value from formal parameters created as reference/pointer
+
+                if(snapshot.root->left != nullptr && snapshot.sum > 0)
+                {
+                    if(returnVal == 1)
+                    {
+                        returnVal = 1;
+                        continue;
+                    }
+                }
+
+                //updating the status of local variable if any
+                //and pushing the snapshot to stage 2
+                //i.e. code to be called after function returns from its first call
+                snapshot.stage = 2;
+
+                s.push(snapshot);
+
+                if(snapshot.root->right != nullptr && snapshot.sum > 0)
+                {
+                    //Creating function call by passing actual argument to formal arguments
+                    //and setting stage to 0
+                    snapshot.root=snapshot.root->right;
+                    // snapshot.sum = snapshot.sum;
+                    snapshot.stage = 0;
+
+                    s.push(snapshot);
+                }
+                continue;
+            }
+
+            case 2:
+            {
+                //in stage 2 variable returnVal holds the return value
+                //from the function call creation made after setting stage=2 and s.push(snapshot)
+                //and any local variable in snapshot passed by reference/pointer during function call
+                //will receive value from formal parameters created as reference/pointer
+
+                if(snapshot.root->right != nullptr && snapshot.sum>0)
+                {
+                    if(returnVal == 1)
+                    {
+                        returnVal = 1;
+                        continue;
+                    }
+                }
+
+                returnVal = (snapshot.sum == 0)?1:0;
+                continue;
+
+                //Alternate if the object to check whether the path from root to leave is equal to sum
+                //rather than root to any node
+                //then, change returnVal from "returnVal = (sum == 0) 1 : 0;" to "returnVal= 0;"
             }
         }
     }
 
-
     #ifdef DEBUG
     std::cout<<std::endl<<"Number of Loops to check Sum of path :: "<<counter<<std::endl;
     #endif // DEBUG
+
+    return returnVal;
 }
 #endif

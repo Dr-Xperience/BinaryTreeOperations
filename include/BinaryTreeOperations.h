@@ -21,6 +21,7 @@
 
 #include "BinaryTree.h"
 #include <deque>
+#include <type_traits>
 
 template<class T>
 class BinaryTreeOperations:public BinaryTree<T>
@@ -61,6 +62,15 @@ class BinaryTreeOperations:public BinaryTree<T>
 
 
         //To check whether the sum of node->data in a path from root to any node in a tree equals a given sum value
+        //Complexity O(N)
+        //using SFINAE and type traits to check, whether T is a numerical value
+
+        //This one when T is not numeric
+        template< typename TT = T, typename std::enable_if<!(std::is_same<float,TT>::value||std::is_same<double,TT>::value||std::is_same<unsigned int,TT>::value||std::is_same<unsigned long,TT>::value)>::type* = nullptr>
+        int isSumEqualsToDataSum(unsigned long sum);
+
+        //This one when T is numeric
+        template< typename TT = T,typename std::enable_if<std::is_same<float,TT>::value||std::is_same<double,TT>::value||std::is_same<unsigned int,TT>::value||std::is_same<unsigned long,TT>::value>::type* = nullptr>
         int isSumEqualsToDataSum(unsigned long sum);
 
 
