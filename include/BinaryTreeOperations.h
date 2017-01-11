@@ -23,61 +23,63 @@
 #include <deque>
 #include <type_traits>
 
-template<class T>
-class BinaryTreeOperations:public BinaryTree<T>
+template <class T>
+class BinaryTreeOperations : public BinaryTree<T>
 {
-    public:
+  public:
+  // Constructors
+  BinaryTreeOperations();
+  BinaryTreeOperations(T);
+  BinaryTreeOperations(BinaryTreeOperations&);
+  virtual ~BinaryTreeOperations();
 
-        //Constructors
-        BinaryTreeOperations();
-        BinaryTreeOperations(T);
-        BinaryTreeOperations(BinaryTreeOperations&);
-        virtual ~BinaryTreeOperations();
+  // MemberFunction
+  void recursionPreOrder(void (*process)(T));
+  void traverseLevelOrder(void (*process)(T));
+  void printLevelOrder(void (*process)(T, bool newLine, bool leaveNode));
+  void traversePreOrderTraversal(void (*process)(T));
 
-        //MemberFunction
-        void recursionPreOrder(void (*process)(T));
-        void traverseLevelOrder(void (*process)(T));
-        void printLevelOrder(void (*process)(T,bool newLine, bool leaveNode));
-        void traversePreOrderTraversal(void (*process)(T));
+  // Complexity O(3N) or O(N) -- it can be reduced to O(N) literally
+  // But haven't tried will try sometime
+  void traversePostOrderTraversal(void (*process)(T));
+  long heightDFS();
+  long heightBFS();
 
-        //Complexity O(3N) or O(N) -- it can be reduced to O(N) literally
-        //But haven't tried will try sometime
-        void traversePostOrderTraversal(void (*process)(T));
-        long heightDFS();
-        long heightBFS();
+  // diameter with O(N*N) or O(N^2) complexity
+  long diameterN2();
 
-        //diameter with O(N*N) or O(N^2) complexity
-        long diameterN2();
+  // diameter with O(N) complexity
+  long diameter();
 
-        //diameter with O(N) complexity
-        long diameter();
+  // Method to return the nodes of diameter in linked list
+  // Complexity O(N*M), where N= total number of nodes and M is twice the no. of levels of tree
+  std::deque<unsigned long> diameterPrint();
 
-        //Method to return the nodes of diameter in linked list
-        //Complexity O(N*M), where N= total number of nodes and M is twice the no. of levels of tree
-        std::deque<unsigned long> diameterPrint();
+  // To print the all the path to leave nodes
+  // Complexity O(N*M), where N= total number of nodes and M is total no. of levels of the tree
+  void pathToLeavesPrint(void (*process)(std::deque<unsigned long>&));
 
-        //To print the all the path to leave nodes
-        //Complexity O(N*M), where N= total number of nodes and M is total no. of levels of the tree
-        void pathToLeavesPrint(void (*process)(std::deque<unsigned long>&));
+  // To check whether the sum of node->data in a path from root to any node in a tree equals a given sum value
+  // Complexity O(N)
+  // using SFINAE and type traits to check, whether T is a numerical value
 
+  // This one when T is not numeric
+  template <typename TT = T,
+            typename std::enable_if<!(std::is_same<float, TT>::value || std::is_same<double, TT>::value || std::is_same<unsigned int, TT>::value ||
+                                      std::is_same<unsigned long, TT>::value)>::type* = nullptr>
+  int isSumEqualsToDataSum(unsigned long sum);
 
-        //To check whether the sum of node->data in a path from root to any node in a tree equals a given sum value
-        //Complexity O(N)
-        //using SFINAE and type traits to check, whether T is a numerical value
+  // This one when T is numeric
+  template <typename TT = T,
+            typename std::enable_if<std::is_same<float, TT>::value || std::is_same<double, TT>::value || std::is_same<unsigned int, TT>::value ||
+                                    std::is_same<unsigned long, TT>::value>::type* = nullptr>
+  int isSumEqualsToDataSum(unsigned long sum);
 
-        //This one when T is not numeric
-        template< typename TT = T, typename std::enable_if<!(std::is_same<float,TT>::value||std::is_same<double,TT>::value||std::is_same<unsigned int,TT>::value||std::is_same<unsigned long,TT>::value)>::type* = nullptr>
-        int isSumEqualsToDataSum(unsigned long sum);
+  protected:
+  void preOrderRec(void (*process)(T), typename BinaryTree<T>::Node* node);
 
-        //This one when T is numeric
-        template< typename TT = T,typename std::enable_if<std::is_same<float,TT>::value||std::is_same<double,TT>::value||std::is_same<unsigned int,TT>::value||std::is_same<unsigned long,TT>::value>::type* = nullptr>
-        int isSumEqualsToDataSum(unsigned long sum);
-
-
-    protected:
-        void preOrderRec(void (*process)(T),typename BinaryTree<T>::Node * node);
-    private:
-//        T BinaryTreeRoot;
+  private:
+  //        T BinaryTreeRoot;
 };
 
-#endif // BINARYTREELEVELORDERTRAVERSAL_H
+#endif  // BINARYTREELEVELORDERTRAVERSAL_H
