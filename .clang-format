@@ -1,0 +1,13 @@
+BasedOnStyle: Google
+AccessModifierOffset: 0
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+BreakBeforeBraces: 'GNU'
+ColumnLimit: 150
+IndentWidth: 2
+NamespaceIndentation: All
+PenaltyBreakComment: 1
+
+
+
