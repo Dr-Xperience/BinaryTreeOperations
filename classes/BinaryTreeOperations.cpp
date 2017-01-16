@@ -67,10 +67,10 @@ void BinaryTreeOperations<T>::traverseLevelOrder(void (*process)(T))
     return;
 
   typedef typename BinaryTree<T>::Node Node;
-  Node* root = this->root;
+  Node* node = this->root;
 
   std::queue<Node*> q;
-  q.push(root);
+  q.push(node);
 
 #ifdef DEBUG
   long counter = 0;
@@ -82,18 +82,18 @@ void BinaryTreeOperations<T>::traverseLevelOrder(void (*process)(T))
       counter++;
 #endif  // DEBUG
 
-      root = q.front();
+      node = q.front();
       q.pop();
-      process(root->data);
+      process(node->data);
 
-      if (root->left != nullptr)
+      if (node->left != nullptr)
         {
-          q.push(root->left);
+          q.push(node->left);
         }
 
-      if (root->right != nullptr)
+      if (node->right != nullptr)
         {
-          q.push(root->right);
+          q.push(node->right);
         }
     }
 
@@ -113,14 +113,14 @@ void BinaryTreeOperations<T>::printLevelOrder(void (*process)(T, bool newLine, b
     return;
 
   typedef typename BinaryTree<T>::Node Node;
-  Node* root = this->root;
+  Node* node = this->root;
 
   std::queue<Node*> q;
 
   Node* newLevel = new Node;
   newLevel->id = 0;
 
-  q.push(root);
+  q.push(node);
   q.push(newLevel);
 
   while (!q.empty())
@@ -129,15 +129,15 @@ void BinaryTreeOperations<T>::printLevelOrder(void (*process)(T, bool newLine, b
       counter++;
 #endif  // DEBUG
 
-      root = q.front();
+      node = q.front();
       q.pop();
 
-      if (root == nullptr)
+      if (node == nullptr)
         {
           process(T(), false, true);
           continue;
         }
-      else if (root->id == 0)
+      else if (node->id == 0)
         {
           if (!q.empty())
             {
@@ -147,11 +147,11 @@ void BinaryTreeOperations<T>::printLevelOrder(void (*process)(T, bool newLine, b
           continue;
         }
       else
-        process(root->data, false, false);
+        process(node->data, false, false);
 
-      q.push(root->left);
+      q.push(node->left);
 
-      q.push(root->right);
+      q.push(node->right);
     }
 
 #ifdef DEBUG
@@ -160,13 +160,13 @@ void BinaryTreeOperations<T>::printLevelOrder(void (*process)(T, bool newLine, b
 }
 
 template <class T>
-void BinaryTreeOperations<T>::preOrderRec(void (*process)(T), typename BinaryTree<T>::Node* root)
+void BinaryTreeOperations<T>::preOrderRec(void (*process)(T), typename BinaryTree<T>::Node* node)
 {
-  if (root == nullptr)
+  if (node == nullptr)
     return;
-  process(root->data);
-  preOrderRec(process, root->left);
-  preOrderRec(process, root->right);
+  process(node->data);
+  preOrderRec(process, node->left);
+  preOrderRec(process, node->right);
 }
 
 template <class T>
@@ -186,25 +186,25 @@ void BinaryTreeOperations<T>::traversePreOrderTraversal(void (*process)(T))
     return;
 
   typedef typename BinaryTree<T>::Node Node;
-  Node* root = this->root;
+  Node* node = this->root;
 
   std::stack<Node*> s;
-  s.push(root);
+  s.push(node);
 
   while (!s.empty())
     {
-      root = s.top();
+      node = s.top();
       s.pop();
-      for (; root != nullptr; root = root->left)
+      for (; node != nullptr; node = node->left)
         {
 #ifdef DEBUG
           counter++;
 #endif  // DEBUG
 
-          process(root->data);
+          process(node->data);
 
-          if (root->right != nullptr)
-            s.push(root->right);
+          if (node->right != nullptr)
+            s.push(node->right);
         }
     }
 
@@ -226,7 +226,7 @@ void BinaryTreeOperations<T>::traversePostOrderTraversal(void (*process)(T))
   struct Snapshot
   {
     // formal argument of Member Function except the reference and pointers
-    Node* root;
+    Node* node;
     // No memberFunctions Present
     unsigned long stage = 0;
   };
@@ -238,7 +238,7 @@ void BinaryTreeOperations<T>::traversePostOrderTraversal(void (*process)(T))
   // and setting stage to 0
   Snapshot snapshot;
 
-  snapshot.root = this->root;
+  snapshot.node = this->root;
   snapshot.stage = 0;
 
   s.push(snapshot);
@@ -256,18 +256,18 @@ void BinaryTreeOperations<T>::traversePostOrderTraversal(void (*process)(T))
         {
           case 0:
             {
-              if (snapshot.root == nullptr)
+              if (snapshot.node == nullptr)
                 continue;
 
               snapshot.stage = 1;
 
               s.push(snapshot);
 
-              if (snapshot.root->left != nullptr)
+              if (snapshot.node->left != nullptr)
                 {
                   // Creating function call by passing actual argument to formal arguments
                   // and setting stage to 0
-                  snapshot.root = snapshot.root->left;
+                  snapshot.node = snapshot.node->left;
                   snapshot.stage = 0;
                   s.push(snapshot);
                 }
@@ -288,11 +288,11 @@ void BinaryTreeOperations<T>::traversePostOrderTraversal(void (*process)(T))
 
               s.push(snapshot);
 
-              if (snapshot.root->right != nullptr)
+              if (snapshot.node->right != nullptr)
                 {
                   // Creating function call by passing actual argument to formal arguments
                   // and setting stage to 0
-                  snapshot.root = snapshot.root->right;
+                  snapshot.node = snapshot.node->right;
                   snapshot.stage = 0;
 
                   s.push(snapshot);
@@ -305,7 +305,7 @@ void BinaryTreeOperations<T>::traversePostOrderTraversal(void (*process)(T))
               // from the function call creation made after setting stage=2 and s.push(snapshot)
               // and any local variable in snapshot passed by reference/pointer during function call
               // will receive value from formal parameters created as reference/pointer
-              process(snapshot.root->data);
+              process(snapshot.node->data);
               continue;
             }
         }
@@ -323,13 +323,13 @@ long BinaryTreeOperations<T>::heightDFS()
   long counter = 0;
 #endif  // DEBUG
         /*
-         heightDFS(root)
+         heightDFS(node)
          {
-           if(root==null)
+           if(node==null)
             return -1;
       
-            l=height(root->left);
-            r=height(root->right);
+            l=height(node->left);
+            r=height(node->right);
       
             if(l>r)
               return(l+1);
@@ -345,7 +345,7 @@ long BinaryTreeOperations<T>::heightDFS()
   struct Snapshot
   {
     // Formal Arguments of function except the reference and pointers
-    Node* root;
+    Node* node;
     // Local Variables
     long leftHeight = -1, rightHeight = -1;
     // stage
@@ -360,7 +360,7 @@ long BinaryTreeOperations<T>::heightDFS()
   // and setting stage to 0
   Snapshot snapshot;
 
-  snapshot.root = this->root;
+  snapshot.node = this->root;
   snapshot.leftHeight = snapshot.rightHeight = -1;
   snapshot.stage = 0;
 
@@ -383,7 +383,7 @@ long BinaryTreeOperations<T>::heightDFS()
         {
           case 0:
             {
-              if (snapshot.root == nullptr)
+              if (snapshot.node == nullptr)
                 {
                   returnVal = -1;
                   continue;
@@ -396,11 +396,11 @@ long BinaryTreeOperations<T>::heightDFS()
 
               s.push(snapshot);
 
-              if (snapshot.root->left != nullptr)
+              if (snapshot.node->left != nullptr)
                 {
                   // Creating function call by passing actual argument to formal arguments
                   // and setting stage to 0
-                  snapshot.root = snapshot.root->left;
+                  snapshot.node = snapshot.node->left;
                   snapshot.leftHeight = snapshot.rightHeight = -1;
                   snapshot.stage = 0;
 
@@ -426,11 +426,11 @@ long BinaryTreeOperations<T>::heightDFS()
               snapshot.stage = 2;
               s.push(snapshot);
 
-              if (snapshot.root->right != nullptr)
+              if (snapshot.node->right != nullptr)
                 {
                   // Creating function call by passing actual argument to formal arguments
                   // and setting stage to 0
-                  snapshot.root = snapshot.root->right;
+                  snapshot.node = snapshot.node->right;
                   snapshot.leftHeight = snapshot.rightHeight = -1;
                   snapshot.stage = 0;
 
@@ -476,11 +476,11 @@ long BinaryTreeOperations<T>::heightBFS()
     return -1;
 
   typedef typename BinaryTree<T>::Node Node;
-  Node* root = this->root;
+  Node* node = this->root;
 
   std::queue<Node*> q;
 
-  q.push(root);
+  q.push(node);
   q.push(nullptr);
   long height = 0;
 
@@ -490,10 +490,10 @@ long BinaryTreeOperations<T>::heightBFS()
       counter++;
 #endif  // DEBUG
 
-      root = q.front();
+      node = q.front();
       q.pop();
 
-      if (root == nullptr)
+      if (node == nullptr)
         {
           if (q.empty() == false)
             {
@@ -503,11 +503,11 @@ long BinaryTreeOperations<T>::heightBFS()
           continue;
         }
 
-      if (root->left != nullptr)
-        q.push(root->left);
+      if (node->left != nullptr)
+        q.push(node->left);
 
-      if (root->right != nullptr)
-        q.push(root->right);
+      if (node->right != nullptr)
+        q.push(node->right);
     }
 
 #ifdef DEBUG
@@ -546,16 +546,16 @@ long BinaryTreeOperations<T>::diameterN2()
   //which ever is maximum becomes the diameter of subtree
   //
   //We just repeat the same step for every node/subtree
-  long diameter(root)
+  long diameter(node)
   {
-      if(root == null)
+      if(node == null)
           return -1;
 
-      long leftHeight=heightDFS(root->left);
-      long rightHeight=heightDFS(root->right);
+      long leftHeight=heightDFS(node->left);
+      long rightHeight=heightDFS(node->right);
 
-      long leftDiameter=diameter(root->left);
-      long rightDiameter=diameter(root->right);
+      long leftDiameter=diameter(node->left);
+      long rightDiameter=diameter(node->right);
 
       return MAX(leftHeight+rightHeight+2,Max(leftDiameter,rightDiameter));
   }
@@ -569,7 +569,7 @@ long BinaryTreeOperations<T>::diameterN2()
   struct Snapshot
   {
     // Formal parameters except the reference and pointers
-    Node* root;
+    Node* node;
     // local variable
     long leftHeight = -1, rightHeight = -1, leftDiameter = -1, rightDiameter = -1;
     // stage
@@ -584,7 +584,7 @@ long BinaryTreeOperations<T>::diameterN2()
   // and setting stage to 0
   Snapshot snapshot;
 
-  snapshot.root = this->root;
+  snapshot.node = this->root;
   snapshot.leftHeight = snapshot.rightHeight = snapshot.leftDiameter = snapshot.rightDiameter = -1;
   snapshot.stage = 0;
 
@@ -609,15 +609,15 @@ long BinaryTreeOperations<T>::diameterN2()
         {
           case 0:
             {
-              if (snapshot.root == nullptr)
+              if (snapshot.node == nullptr)
                 {
                   returnVal = -1;
                   continue;
                 }
 
-              this->root = snapshot.root->left;
+              this->root = snapshot.node->left;
               snapshot.leftHeight = this->heightDFS();
-              this->root = snapshot.root->right;
+              this->root = snapshot.node->right;
               snapshot.rightHeight = this->heightDFS();
 
               // updating the status of local variable if any
@@ -627,11 +627,11 @@ long BinaryTreeOperations<T>::diameterN2()
 
               s.push(snapshot);
 
-              if (snapshot.root->left != nullptr)
+              if (snapshot.node->left != nullptr)
                 {
                   // Creating function call by passing actual argument to formal arguments
                   // and setting stage to 0
-                  snapshot.root = snapshot.root->left;
+                  snapshot.node = snapshot.node->left;
                   snapshot.leftHeight = snapshot.rightHeight = snapshot.leftDiameter = snapshot.rightDiameter = -1;
                   snapshot.stage = 0;
 
@@ -658,11 +658,11 @@ long BinaryTreeOperations<T>::diameterN2()
 
               s.push(snapshot);
 
-              if (snapshot.root->right != nullptr)
+              if (snapshot.node->right != nullptr)
                 {
                   // Creating function call by passing actual argument to formal arguments
                   // and setting stage to 0
-                  snapshot.root = snapshot.root->right;
+                  snapshot.node = snapshot.node->right;
                   snapshot.leftHeight = snapshot.rightHeight = snapshot.leftDiameter = snapshot.rightDiameter = -1;
                   snapshot.stage = 0;
 
@@ -707,13 +707,13 @@ long BinaryTreeOperations<T>::diameter()
           // calculate diameter along with height this will give us algorithm with complexity O(N)
       
           // conventional height algorithm
-          long height(Node * root)
+          long height(Node * node)
           {
-            if(root == nullptr)
+            if(node == nullptr)
                 return -1;
       
-            long heightLeft = height(root->left);
-            long heightRight = height(root->right);
+            long heightLeft = height(node->left);
+            long heightRight = height(node->right);
       
             return (Max(heightLeft,heightRight)+1);
           }
@@ -727,13 +727,13 @@ long BinaryTreeOperations<T>::diameter()
       
         // so we can use this in our current height algorithm
       
-          long height(Node * root)
+          long height(Node * node)
           {
-            if(root == nullptr)
+            if(node == nullptr)
                 return -1;
       
-            long heightLeft = height(root->left);
-            long heightRight = height(root->right);
+            long heightLeft = height(node->left);
+            long heightRight = height(node->right);
       
         // Like height, diameter is count of edges,
         // We add two to the height of left subtree and right subtree,
@@ -747,16 +747,16 @@ long BinaryTreeOperations<T>::diameter()
         // we can solve it by passing a pointer(reference in case of c++)
         // to the height method, which will store the diameter
       
-           long height(Node *root, long *diameter) //in explanation I am implementing using pointer
+           long height(Node *node, long *diameter) //in explanation I am implementing using pointer
            {                                      //but in actual code it will be reference
       
-            if(root == nullptr)
+            if(node == nullptr)
                 return -1;
       
             long diameterLeft = 0, diameterRight = 0;
       
-            long heightLeft = height(root->left, &diameterLeft);
-            long heightRight = height(root->right, &diameterRight);
+            long heightLeft = height(node->left, &diameterLeft);
+            long heightRight = height(node->right, &diameterRight);
       
             long diameterNode = heightLeft + heightRight + 2;
       
@@ -768,13 +768,13 @@ long BinaryTreeOperations<T>::diameter()
          // We can make it a more optimized (space optimized)
          // (The algo from narasimha karumanchi's book
       
-             long height(Node * root, long *diameter)
+             long height(Node * node, long *diameter)
              {
-                if(root == nullptr)
+                if(node == nullptr)
                   return -1;
       
-                heightLeft = height(root->left, diameter);
-                heightRight = height(root->right, diameter);
+                heightLeft = height(node->left, diameter);
+                heightRight = height(node->right, diameter);
       
                 // Note: Till this point the diameter variable contains
                 // the max of diameter of left and right subtree
@@ -806,7 +806,7 @@ long BinaryTreeOperations<T>::diameter()
       
              The diameter will called as:
              int diameterV = -1;
-             diameter(root,&diameterV);
+             diameter(node,&diameterV);
         **/
 
   if (this->root == nullptr)
@@ -816,7 +816,7 @@ long BinaryTreeOperations<T>::diameter()
   struct Snapshot
   {
     // Formal parameters except the reference and pointers
-    Node* root;
+    Node* node;
     // No need to make data member for diameter
     // because it is a reference
     //(remember I said
@@ -837,7 +837,7 @@ long BinaryTreeOperations<T>::diameter()
   // Creating function call by passing actual argument to formal arguments present in the snapshot
   // and setting stage to 0
   Snapshot snapshot;
-  snapshot.root = this->root;
+  snapshot.node = this->root;
   snapshot.heightLeft = snapshot.heightRight = -1;
   snapshot.stage = 0;
 
@@ -860,7 +860,7 @@ long BinaryTreeOperations<T>::diameter()
         {
           case (0):
             {
-              if (snapshot.root == nullptr)
+              if (snapshot.node == nullptr)
                 {
                   returnVal = -1;
                   continue;
@@ -873,11 +873,11 @@ long BinaryTreeOperations<T>::diameter()
 
               s.push(snapshot);
 
-              if (snapshot.root->left != nullptr)
+              if (snapshot.node->left != nullptr)
                 {
                   // Creating function call by passing actual argument to formal arguments
                   // and setting stage to 0
-                  snapshot.root = snapshot.root->left;
+                  snapshot.node = snapshot.node->left;
                   snapshot.heightLeft = snapshot.heightRight = -1;
                   snapshot.stage = 0;
 
@@ -904,11 +904,11 @@ long BinaryTreeOperations<T>::diameter()
 
               s.push(snapshot);
 
-              if (snapshot.root->right != nullptr)
+              if (snapshot.node->right != nullptr)
                 {
                   // Creating function call by passing actual argument to formal arguments
                   // and setting stage to 0
-                  snapshot.root = snapshot.root->right;
+                  snapshot.node = snapshot.node->right;
                   snapshot.heightLeft = snapshot.heightRight = -1;
                   snapshot.stage = 0;
 
@@ -953,23 +953,23 @@ std::deque<unsigned long> BinaryTreeOperations<T>::diameterPrint()
 {
 /**
 
-std::deque<unsigned long> diameterPrint(Node * root, long &height, long &diameter, deque<unsigned long> &diameterList)
+std::deque<unsigned long> diameterPrint(Node * node, long &height, long &diameter, deque<unsigned long> &diameterList)
 {
-    if(root == nullptr)
+    if(node == nullptr)
         return std::deque<unsigned long>();
 
     long heightLeft = -1, heightRight = -1;
 
     std::deque<unsigned long> subtreeLeft, subtreeRight;
 
-    if(root->left != nullptr)
+    if(node->left != nullptr)
     {
-        subtreeLeft = diameterPrint(root->left,heightLeft,diameter,diameterList);
+        subtreeLeft = diameterPrint(node->left,heightLeft,diameter,diameterList);
     }
 
-    if(root->right != nullptr)
+    if(node->right != nullptr)
     {
-        subtreeRight = diameterPrint(root->right,heightRight,diameter,diameterRight);
+        subtreeRight = diameterPrint(node->right,heightRight,diameter,diameterRight);
     }
 
     if(heightLeft+heightRight+2 > diameter)
@@ -977,20 +977,20 @@ std::deque<unsigned long> diameterPrint(Node * root, long &height, long &diamete
         diameter = heightLeft + heightRight + 2;
         diameterList.clear();
         diameterList.insert(diameterList.end(),subtreeLeft.begin(),subtreeLeft.end());
-        diameterList.push_back(root->id);
+        diameterList.push_back(node->id);
         diameterList.insert(diameterList.end(),subtreeRight,rbegin(),subtreeRight.rend());
     }
 
     if(heightLeft>heightRight)
     {
         height = heightLeft+1;
-        subtreeLeft.push_back(root->id);
+        subtreeLeft.push_back(node->id);
         return subtreeLeft;
     }
     else
     {
         height = heightRight + 1;
-        subtreeRight.push_back(root->id);
+        subtreeRight.push_back(node->id);
         return subtreeRight;
     }
 }
@@ -1010,7 +1010,7 @@ std::deque<unsigned long> diameterPrint(Node * root, long &height, long &diamete
   struct Snapshot
   {
     // input parameters except the reference and pointers
-    Node* root;
+    Node* node;
 
     // local variables
     long heightLeft = -1, heightRight = -1;
@@ -1029,7 +1029,7 @@ std::deque<unsigned long> diameterPrint(Node * root, long &height, long &diamete
   // and setting stage to 0
   Snapshot snapshot;
 
-  snapshot.root = this->root;
+  snapshot.node = this->root;
   // the stage is by default set to 0
 
   // Creating manual function stack
@@ -1051,13 +1051,13 @@ std::deque<unsigned long> diameterPrint(Node * root, long &height, long &diamete
         {
           case 0:
             {
-              //                if(snapshot.root->left == nullptr && snapshot.root->right == nullptr)
+              //                if(snapshot.node->left == nullptr && snapshot.node->right == nullptr)
               //                {
               //                    height = 0;
               //                    diameter = 0;
-              //                    diameterList.push_back(snapshot.root->id);
-              //                    snapshot.subtreeLeft.push_back(snapshot.root->id);
-              //                    snapshot.subtreeRight.push_back(snapshot.root->id);
+              //                    diameterList.push_back(snapshot.node->id);
+              //                    snapshot.subtreeLeft.push_back(snapshot.node->id);
+              //                    snapshot.subtreeRight.push_back(snapshot.node->id);
               //                    returnVal = snapshot.subtreeLeft;
               //                    continue;
               //                }
@@ -1069,11 +1069,11 @@ std::deque<unsigned long> diameterPrint(Node * root, long &height, long &diamete
 
               s.push(snapshot);
 
-              if (snapshot.root->left != nullptr)
+              if (snapshot.node->left != nullptr)
                 {
                   // Creating function call by passing actual argument to formal arguments
                   // and setting stage to 0
-                  snapshot.root = snapshot.root->left;
+                  snapshot.node = snapshot.node->left;
                   snapshot.heightLeft = snapshot.heightRight = -1;
                   snapshot.subtreeLeft.clear();
                   snapshot.subtreeRight.clear();
@@ -1091,7 +1091,7 @@ std::deque<unsigned long> diameterPrint(Node * root, long &height, long &diamete
               // from the function call creation made after setting stage=1 and s.push(snapshot)
               // and any local variable in snapshot passed by reference/pointer during function call
               // will receive value from formal parameters created as reference/pointer
-              if (snapshot.root->left != nullptr)
+              if (snapshot.node->left != nullptr)
                 {
                   // in this case snapshot.heightRight was passed as reference during function call in algorithm
                   // this will get its value from height which is formal parameter created as reference
@@ -1106,11 +1106,11 @@ std::deque<unsigned long> diameterPrint(Node * root, long &height, long &diamete
 
               s.push(snapshot);
 
-              if (snapshot.root->right != nullptr)
+              if (snapshot.node->right != nullptr)
                 {
                   // Creating function call by passing actual argument to formal arguments
                   // and setting stage to 0
-                  snapshot.root = snapshot.root->right;
+                  snapshot.node = snapshot.node->right;
                   snapshot.heightLeft = snapshot.heightRight = -1;
                   snapshot.subtreeLeft.clear();
                   snapshot.subtreeRight.clear();
@@ -1127,7 +1127,7 @@ std::deque<unsigned long> diameterPrint(Node * root, long &height, long &diamete
               // from the function call creation made after setting stage=2 and s.push(snapshot)
               // and any local variable in snapshot passed by reference/pointer during function call
               // will receive value from formal parameters created as reference/pointer
-              if (snapshot.root->right != nullptr)
+              if (snapshot.node->right != nullptr)
                 {
                   // in this case snapshot.heightRight was passed as reference during function call in algorithm
                   // this will get its value from height which is formal parameter created as reference
@@ -1140,20 +1140,20 @@ std::deque<unsigned long> diameterPrint(Node * root, long &height, long &diamete
                   diameter = snapshot.heightLeft + snapshot.heightRight + 2;
                   diameterList.clear();
                   diameterList.insert(diameterList.end(), snapshot.subtreeLeft.begin(), snapshot.subtreeLeft.end());
-                  diameterList.push_back(snapshot.root->id);
+                  diameterList.push_back(snapshot.node->id);
                   diameterList.insert(diameterList.end(), snapshot.subtreeRight.rbegin(), snapshot.subtreeRight.rend());
                 }
 
               if (snapshot.heightLeft > snapshot.heightRight)
                 {
                   height = snapshot.heightLeft + 1;
-                  snapshot.subtreeLeft.push_back(snapshot.root->id);
+                  snapshot.subtreeLeft.push_back(snapshot.node->id);
                   returnVal = snapshot.subtreeLeft;
                 }
               else
                 {
                   height = snapshot.heightRight + 1;
-                  snapshot.subtreeRight.push_back(snapshot.root->id);
+                  snapshot.subtreeRight.push_back(snapshot.node->id);
                   returnVal = snapshot.subtreeRight;
                 }
 
@@ -1178,14 +1178,14 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
 {
   /**
 
-  void pathPrint(Node* root, std::deque<unsigned long>& list)
+  void pathPrint(Node* node, std::deque<unsigned long>& list)
   {
-      if(root == nullptr)
+      if(node == nullptr)
           return;
 
-      list.push_back(root->id);
+      list.push_back(node->id);
 
-      if(root->left==nullptr && root->right==nullptr)
+      if(node->left==nullptr && node->right==nullptr)
       {
           print(list);
           return;
@@ -1199,9 +1199,9 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
   commands\libstdc++-v3\include\bits\stl_list.h")
              //"C:\Home\Dr.Xperience\INNOVATE\dissertation\Progs\gcc source+ modified source+compile commands\libstdc++-v3\src\c++98\list.cc"
 
-      if(root->left != nullptr)
+      if(node->left != nullptr)
       {
-          pathPrint(root->left,list);
+          pathPrint(node->left,list);
 
           //now move itr to next node after current
           itr++;
@@ -1212,9 +1212,9 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
           itr--;
       }
 
-      if(root->right != nullptr)
+      if(node->right != nullptr)
       {
-          pathPrint(root->right,list);
+          pathPrint(node->right,list);
           itr++;
           itr = list.erase(itr,list.end());
           itr--;
@@ -1233,7 +1233,7 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
   struct Snapshot
   {
     // input parameters except the reference and pointers
-    Node* root;
+    Node* node;
 
     // local variable
     std::deque<unsigned long>::iterator itr;
@@ -1250,7 +1250,7 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
   // and setting stage to 0
   Snapshot snapshot;
 
-  snapshot.root = this->root;
+  snapshot.node = this->root;
 
   // Creating manual function stack
   std::stack<Snapshot> s;
@@ -1271,8 +1271,8 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
         {
           case 0:
             {
-              list.push_back(snapshot.root->id);
-              if (snapshot.root->left == nullptr && snapshot.root->right == nullptr)
+              list.push_back(snapshot.node->id);
+              if (snapshot.node->left == nullptr && snapshot.node->right == nullptr)
                 {
                   process(list);
                   continue;
@@ -1288,11 +1288,11 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
 
               s.push(snapshot);
 
-              if (snapshot.root->left != nullptr)
+              if (snapshot.node->left != nullptr)
                 {
                   // Creating function call by passing actual argument to formal arguments
                   // and setting stage to 0
-                  snapshot.root = snapshot.root->left;
+                  snapshot.node = snapshot.node->left;
                   snapshot.itr = list.end();
                   snapshot.stage = 0;
 
@@ -1307,7 +1307,7 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
               // from the function call creation made after setting stage=1 and s.push(snapshot)
               // and any local variable in snapshot passed by reference/pointer during function call
               // will receive value from formal parameters created as reference/pointer
-              if (snapshot.root->left != nullptr)
+              if (snapshot.node->left != nullptr)
                 {
                   snapshot.itr++;  // increment to point to next element
                   snapshot.itr = list.erase(snapshot.itr, list.end());
@@ -1321,11 +1321,11 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
                   s.push(snapshot);
                 }
 
-              if (snapshot.root->right != nullptr)
+              if (snapshot.node->right != nullptr)
                 {
                   // Creating function call by passing actual argument to formal arguments
                   // and setting stage to 0
-                  snapshot.root = snapshot.root->right;
+                  snapshot.node = snapshot.node->right;
                   snapshot.itr = list.end();
                   snapshot.stage = 0;
                   s.push(snapshot);
@@ -1339,7 +1339,7 @@ void BinaryTreeOperations<T>::pathToLeavesPrint(void (*process)(std::deque<unsig
               // from the function call creation made after setting stage=2 and s.push(snapshot)
               // and any local variable in snapshot passed by reference/pointer during function call
               // will receive value from formal parameters created as reference/pointer
-              if (snapshot.root->right != nullptr)
+              if (snapshot.node->right != nullptr)
                 {
                   snapshot.itr++;
                   snapshot.itr = list.erase(snapshot.itr, list.end());
@@ -1371,26 +1371,26 @@ int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
   /**
   //Algorithm
 
-  int isSumEqualsToDataSum(Node* root, unsigned long sum)
+  int isSumEqualsToDataSum(Node* node, unsigned long sum)
   {
-      if(root == nullptr)
+      if(node == nullptr)
           return -1;
-      sum = sum - (root->data);
+      sum = sum - (node->data);
 
-      if(root->left == nullptr && root->right == nullptr)
+      if(node->left == nullptr && node->right == nullptr)
       {
           return (sum == 0);
       }
 
-      if(root->left != nullptr && sum > 0)
+      if(node->left != nullptr && sum > 0)
       {
-          if(isSumEqualsToDataSum(root->left,sum) == 1)
+          if(isSumEqualsToDataSum(node->left,sum) == 1)
               return 1;
       }
 
-      if(root->right != nullptr && sum > 0)
+      if(node->right != nullptr && sum > 0)
       {
-          if(isSumEqualsToDataSum(root->right,sum) == 1)
+          if(isSumEqualsToDataSum(node->right,sum) == 1)
               return 1;
       }
 
@@ -1454,7 +1454,7 @@ int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
   struct Snapshot
   {
     // formal parameters except any reference or pointer arguments
-    Node* root;
+    Node* node;
     unsigned long sum;
 
     // local variables in function
@@ -1473,10 +1473,10 @@ int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
   // Creating manual function stack
   std::stack<Snapshot> s;
 
-  // Creating function call i.e isSumEqualsToDataSum(root,5);
+  // Creating function call i.e isSumEqualsToDataSum(node,5);
   // by passing actual argument to formal arguments present in the snapshot
   Snapshot snapshot;
-  snapshot.root = this->root;
+  snapshot.node = this->root;
   snapshot.sum = sum;
 
   // stage is by default set to 0 so no need to set it to zero
@@ -1492,9 +1492,9 @@ int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
         {
           case 0:
             {
-              snapshot.sum = snapshot.sum - (snapshot.root->data);
+              snapshot.sum = snapshot.sum - (snapshot.node->data);
 
-              if (snapshot.root->left == nullptr && snapshot.root->right == nullptr)
+              if (snapshot.node->left == nullptr && snapshot.node->right == nullptr)
                 {
                   returnVal = (snapshot.sum == 0) ? 1 : 0;
                   continue;
@@ -1507,11 +1507,11 @@ int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
 
               s.push(snapshot);
 
-              if (snapshot.root->left != nullptr && snapshot.sum > 0)
+              if (snapshot.node->left != nullptr && snapshot.sum > 0)
                 {
                   // Creating function call by passing actual argument to formal arguments
                   // and setting stage to 0
-                  snapshot.root = snapshot.root->left;
+                  snapshot.node = snapshot.node->left;
                   // snapshot.sum = snapshot.sum;
                   snapshot.stage = 0;
 
@@ -1528,7 +1528,7 @@ int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
               // and any local variable in snapshot passed by reference/pointer during function call
               // will receive value from formal parameters created as reference/pointer
 
-              if (snapshot.root->left != nullptr && snapshot.sum > 0)
+              if (snapshot.node->left != nullptr && snapshot.sum > 0)
                 {
                   if (returnVal == 1)
                     {
@@ -1544,11 +1544,11 @@ int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
 
               s.push(snapshot);
 
-              if (snapshot.root->right != nullptr && snapshot.sum > 0)
+              if (snapshot.node->right != nullptr && snapshot.sum > 0)
                 {
                   // Creating function call by passing actual argument to formal arguments
                   // and setting stage to 0
-                  snapshot.root = snapshot.root->right;
+                  snapshot.node = snapshot.node->right;
                   // snapshot.sum = snapshot.sum;
                   snapshot.stage = 0;
 
@@ -1564,7 +1564,7 @@ int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
               // and any local variable in snapshot passed by reference/pointer during function call
               // will receive value from formal parameters created as reference/pointer
 
-              if (snapshot.root->right != nullptr && snapshot.sum > 0)
+              if (snapshot.node->right != nullptr && snapshot.sum > 0)
                 {
                   if (returnVal == 1)
                     {
@@ -1589,4 +1589,25 @@ int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
 
   return returnVal;
 }
+
+template <class T>
+T BinaryTreeOperations<T>::deepestNodeBFS()
+{
+	if(this->root == nullptr)
+		return T(); //throw some exception
+		
+	typedef typename BinaryTree<T>::Node Node;
+	
+	Node node = this->root;
+	
+	std::queue<Node *> q;
+	q.push(node);
+	
+	while(!q.empty())
+	{
+		node = q.front(); q.pop();
+	}
+}
+
+
 #endif

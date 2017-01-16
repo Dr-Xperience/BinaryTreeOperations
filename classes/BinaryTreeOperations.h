@@ -74,6 +74,8 @@ class BinaryTreeOperations : public BinaryTree<T>
             typename std::enable_if<std::is_same<float, TT>::value || std::is_same<double, TT>::value || std::is_same<unsigned int, TT>::value ||
                                     std::is_same<unsigned long, TT>::value>::type* = nullptr>
   int isSumEqualsToDataSum(unsigned long sum);
+  
+  T deepestNodeBFS();
 
   protected:
   void preOrderRec(void (*process)(T), typename BinaryTree<T>::Node* node);
