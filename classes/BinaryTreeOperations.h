@@ -75,7 +75,11 @@ class BinaryTreeOperations : public BinaryTree<T>
                                     std::is_same<unsigned long, TT>::value>::type* = nullptr>
   int isSumEqualsToDataSum(unsigned long sum);
   
+  //Complexity O(N)
   T deepestNodeBFS();
+  
+  template<typename Compare>
+  void deleteNodeGivenDataApproach1(T data, Compare comp);
 
   protected:
   void preOrderRec(void (*process)(T), typename BinaryTree<T>::Node* node);

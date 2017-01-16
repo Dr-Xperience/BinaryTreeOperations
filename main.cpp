@@ -127,6 +127,9 @@ int main()
 //    shortcut to print list on ostream
     std::copy(list.begin(),list.end(),std::ostream_iterator<unsigned long>(std::cout," "));
     std::cout<<std::endl;
+	
+	std::cout<<"The deepest node of the tree : "<<b.deepestNodeBFS()<<std::endl;
+	
     b.clear();
 
     BinaryTreeOperations<unsigned int> b1;

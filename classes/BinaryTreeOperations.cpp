@@ -1593,21 +1593,150 @@ int BinaryTreeOperations<T>::isSumEqualsToDataSum(unsigned long sum)
 template <class T>
 T BinaryTreeOperations<T>::deepestNodeBFS()
 {
-	if(this->root == nullptr)
-		return T(); //throw some exception
-		
-	typedef typename BinaryTree<T>::Node Node;
-	
-	Node node = this->root;
-	
-	std::queue<Node *> q;
-	q.push(node);
-	
-	while(!q.empty())
-	{
-		node = q.front(); q.pop();
-	}
+  if (this->root == nullptr)
+    return T();  // throw some exception
+
+  typedef typename BinaryTree<T>::Node Node;
+
+  Node *node = this->root;
+
+  std::queue<Node*> q;
+  q.push(node);
+
+  while (!q.empty())
+    {
+      node = q.front();
+      q.pop();
+
+      if (node->left != nullptr)
+        {
+          q.push(node->left);
+        }
+
+      if (node->right != nullptr)
+        {
+          q.push(node->right);
+        }
+    }
+  return node->data;
 }
 
 
+template <class T> template<typename Compare>
+void BinaryTreeOperations<T>::deleteNodeGivenDataApproach1(T data, Compare comp)
+{
+	/***************************************************************
+	 * My Approach 1 (This approach will be pretty usefull during node balancing)
+	 * 
+	 * What I am trying to do is, when a node is identified as the one to be delete,
+	 * 
+	 * i> I save the address of the pointer pointing to the identifed node(i.e. either root or node->left or node->right in **parent pointer.
+	 *    Then, I shift all the node on its left or right subtree (whichever available)
+	 *    up by one level
+	 * 	Example : 
+	 * 			In this we need to remove this->root node
+	 * 			parent = &(this->root) // else we would have done something like parent=&(node->left)
+	 * 					    *parent													 *parent
+	 * 					       |														|
+	 * 					       1	<= node to be deleted								2
+	 * 				    /            \											 /            \
+	 * 			       2              3					==>						4              3
+	 * 			     /   \         /    \								      /   \         /    \
+	 * 			    4     5       6      7							         8     5       6      7
+	 * 			   / \   / \    /  \   /  \							          \   / \    /  \   /  \
+	 * 			  8   9 10 11  12  13 14  15						           9 10 11  12  13 14  15
+	 * 
+	 * ii> This is achieved by carrying out following steps
+	 * 
+	 * 		Assuming we have a left subtree available
+	 * 		
+	 * 		a.> We save the right node of the left node of the identified
+	 * 			node in temp variable
+	 * 
+	 * 			temp = (*parent)->left-right
+	 * 
+	 * 				*parent
+	 * 					|
+	 * 					1
+	 * 				   /
+	 * 				  2							temp =>  5
+	 * 				   \			==> 			   /  \
+	 * 				    5							  10  11
+	 * 				   / \
+	 * 				  10 11
+	 * 
+	 * 		b.> Assign the right subtree of the identified node to the right of the left node of the identified node.
+	 * 			
+	 * 			(*parent)->left->right = (*parent)->right
+	 * 
+	 * 				*parent								*parent
+	 * 					|									|
+	 * 					1									1
+	 * 				   /								   /
+	 * 				  2			   ==> 					  2
+	 * 				   \								   \
+	 * 				    x								    3
+	 * 				   									   / \
+	 * 													  6   7
+	 * 
+	 * 		c.> Now both (*parent)->left->right and (*parent)->right are pointing to
+	 * 			same subtree
+	 * 
+	 * 						  *parent
+	 * 							 |
+	 * 					    2----1
+	 * 					  /  \  /
+	 * 					 4    3
+	 * 					/ \  / \
+	 * 				   8  9 6   7
+	 * 
+	 * 		d.> Now delete the identified node & update the pointer(*parent) 
+	 * 			pointing to the current(identified) node with the replaced node
+	 * 
+	 * 			node = (*parent)->left; //where node is the pointer pointing to identified node as well
+	 * 			delete *parent;
+	 * 			(*parent)=node;
+	 * 
+	 * 					*parent									temp
+	 * 						|									  |
+	 * 					    2									  5
+	 * 					  /  \  				&				 / \
+	 * 					 4    3									10 11
+	 * 					/ \  / \
+	 * 				   8  9 6   7
+	 * 
+	 * 		e.> We have a tree with identified node deleted. Now all we have to do is,
+	 * 			iterate on the left path and adjust the right subtree
+	 * 
+	 * 			while(temp != nullptr && node->left != nullptr)
+	 * 			{
+	 * 				temp1 = node->left->right;
+	 * 				node->left->right = temp;
+	 * 				temp = temp1;
+	 * 				node = node->left;
+	 * 			}
+	 * 
+	 *							 *parent
+	 *								|
+	 *								2
+	 *						 /            \
+	 *						4              3
+	 *				      /   \         /    \
+	 *			         8     5       6      7
+	 * 			          \   / \    /  \   /  \
+	 *			           9 10 11  12  13 14  15
+	 * 
+	 * 		f.> Covering a corner case when temp != nullptr but node->left == nullptr
+	 * 					    *parent													 *parent
+	 * 					       |														|
+	 * 					       1	<= node to be deleted								2
+	 * 				    /            \											 /            \
+	 * 			       2              3					==>						4              3
+	 * 			     /   \         /    \								      /   \         /    \
+	 * 			    4     5       6      7							         9     5       6      7
+	 * 			     \   / \    /  \   /  \							              / \    /  \   /  \
+	 * 			     9 10 11  12  13 14  15							        	 10 11  12  13 14  15
+	 * 
+	 * ****************************************************************************/
+}
 #endif
