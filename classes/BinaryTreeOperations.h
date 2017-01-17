@@ -80,6 +80,9 @@ class BinaryTreeOperations : public BinaryTree<T>
   
   template<typename Compare>
   void deleteNodeGivenDataApproach1(T data, Compare comp);
+  
+  template<typename Compare>
+  void deleteNodeGivenDataApproach2(T data, Compare comp);
 
   protected:
   void preOrderRec(void (*process)(T), typename BinaryTree<T>::Node* node);

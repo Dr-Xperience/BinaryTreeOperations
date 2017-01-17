@@ -1694,6 +1694,7 @@ void BinaryTreeOperations<T>::deleteNodeGivenDataApproach1(T data, Compare comp)
    * 			pointing to the current(identified) node with the replaced node
    *
    * 			node = (*parent)->left; //where node is the pointer pointing to identified node as well
+   * 			node->id = (*parent)->id;
    * 			delete *parent;
    * 			(*parent)=node;
    *
@@ -1713,6 +1714,7 @@ void BinaryTreeOperations<T>::deleteNodeGivenDataApproach1(T data, Compare comp)
    * 				temp1 = node->left->right;
    * 				node->left->right = temp;
    * 				temp = temp1;
+   * 				node->left->id = 2 * (node->id);
    * 				node = node->left;
    * 			}
    *
@@ -1737,6 +1739,11 @@ void BinaryTreeOperations<T>::deleteNodeGivenDataApproach1(T data, Compare comp)
    * 			     \   / \    /  \   /  \					              / \    /  \   /  \
    * 			     9 10 11  12  13 14  15					        	 10 11  12  13 14  15
    *
+   * 			if(temp != nullptr && node->left == nullptr)
+   * 			{
+   * 				node->left = temp;
+   * 				node->left->id = 2 * (node->id);
+   * 			}
    * ****************************************************************************/
 
   if (this->root == nullptr)
@@ -1755,11 +1762,11 @@ void BinaryTreeOperations<T>::deleteNodeGivenDataApproach1(T data, Compare comp)
       parent = &(this->root);
     }
 
-  std::queue<Node*> q;
-  q.push(node);
-
   if (parent == nullptr)
     {
+      std::queue<Node*> q;
+      q.push(node);
+
       while (!q.empty())
         {
 #ifdef DEBUG
@@ -1847,6 +1854,126 @@ void BinaryTreeOperations<T>::deleteNodeGivenDataApproach1(T data, Compare comp)
     {
       delete *parent;
       *parent = nullptr;
+    }
+
+#ifdef DEBUG
+  std::cout << std::endl << "Number of Loops to delete node with given data :: " << counter << std::endl;
+#endif
+}
+
+template <class T>
+template <typename Compare>
+void BinaryTreeOperations<T>::deleteNodeGivenDataApproach2(T data, Compare comp)
+{
+  /*************************************************************************
+   * When a node is identified save its parensts. Find the deepest node in the subtree of the identified node.
+   * Delete the identified node & insert the deepest node of the subtree instead
+   * *****************************************************************************/
+
+  if (this->root == nullptr)
+    return;  // throw exception
+
+#ifdef DEBUG
+  unsigned long counter = 0;
+#endif
+
+  typedef typename BinaryTree<T>::Node Node;
+
+  Node* node = this->root;
+  Node** parent = nullptr;
+  Node** deepParent = nullptr;
+
+  if (comp(data, node->data) == 0)
+    {
+      parent = &(this->root);
+    }
+
+  if (parent == nullptr)
+    {
+      std::queue<Node*> q;
+      q.push(node);
+
+      while (!q.empty())
+        {
+#ifdef DEBUG
+          counter++;
+#endif
+          node = q.front();
+          q.pop();
+
+          if (node->left != nullptr)
+            {
+              if (comp(data, node->left->data) == 0)
+                {
+                  parent = &(node->left);
+                  break;
+                }
+              q.push(node->left);
+            }
+
+          if (node->right != nullptr)
+            {
+              if (comp(data, node->right->data) == 0)
+                {
+                  parent = &(node->right);
+                  break;
+                }
+              q.push(node->right);
+            }
+        }  // end of while
+    }
+
+  if (parent == nullptr)
+    return;  // throw exception (node not found)
+
+  node = *parent;
+
+  while (node->left != nullptr || node->right != nullptr)
+    {
+#ifdef DEBUG
+      counter++;
+#endif
+      if (node->left != nullptr)
+        {
+          deepParent = &(node->left);
+          node = node->left;
+        }
+      else if (node->right != nullptr)
+        {
+          deepParent = &(node->right);
+          node = node->right;
+        }
+    }
+
+  if (deepParent == nullptr)
+    {
+      delete *parent;
+      *parent = nullptr;
+    }
+  else if ((*parent)->left != *deepParent && (*parent)->right != *deepParent)
+    {
+      (*deepParent)->left = (*parent)->left;
+      (*deepParent)->right = (*parent)->right;
+
+      delete *parent;
+      *parent = *deepParent;
+      *deepParent = nullptr;
+    }
+  else
+    {
+      if ((*parent)->left != *deepParent)
+        {
+          (*deepParent)->left = (*parent)->left;
+        }
+      if ((*parent)->right != *deepParent)
+        {
+          (*deepParent)->right = (*parent)->right;
+        }
+
+      // Saving deepParent value in node because deepParent is either left pointer or right pointer inside parent
+      node = *deepParent;
+      delete *parent;
+      (*parent) = node;
     }
 
 #ifdef DEBUG

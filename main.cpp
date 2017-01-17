@@ -87,7 +87,7 @@ int main()
 
   std::cout << "Is there exist a path with sum = 3 :: " << b.isSumEqualsToDataSum(3) << std::endl;
 
-  b.deleteNodeGivenDataApproach1("12", comp);
+  b.deleteNodeGivenDataApproach2("12", comp);
   std::cout << "Tree After Node deletion :: " << std::endl;
   b.printLevelOrder(print);
 
@@ -123,15 +123,15 @@ int main()
 
   std::cout << std::endl << "Diameter of Tree :: " << b.diameter() << std::endl;
 
-  b.deleteNodeGivenDataApproach1("1", comp);
+  b.deleteNodeGivenDataApproach2("1", comp);
   std::cout << "Tree After Node deletion :: " << std::endl;
   b.printLevelOrder(print);
 
-  b.deleteNodeGivenDataApproach1("4", comp);
+  b.deleteNodeGivenDataApproach2("4", comp);
   std::cout << "Tree After Node deletion :: " << std::endl;
   b.printLevelOrder(print);
 
-  b.deleteNodeGivenDataApproach1("5", comp);
+  b.deleteNodeGivenDataApproach2("5", comp);
   std::cout << "Tree After Node deletion :: " << std::endl;
   b.printLevelOrder(print);
 
@@ -162,35 +162,35 @@ int main()
 
   std::cout << "\nIs there exist a path with sum = 1 :: " << b1.isSumEqualsToDataSum(1) << std::endl;
 
-  b1.deleteNodeGivenDataApproach1(1, compare);
+  b1.deleteNodeGivenDataApproach2(1, compare);
   std::cout << "Tree After Node deletion :: " << std::endl;
   b1.printLevelOrder(print);
 
-  b1.deleteNodeGivenDataApproach1(4, compare);
+  b1.deleteNodeGivenDataApproach2(4, compare);
   std::cout << "Tree After Node deletion :: " << std::endl;
   b1.printLevelOrder(print);
 
-  b1.deleteNodeGivenDataApproach1(6, compare);
+  b1.deleteNodeGivenDataApproach2(6, compare);
   std::cout << "Tree After Node deletion :: " << std::endl;
   b1.printLevelOrder(print);
 
-  b1.deleteNodeGivenDataApproach1(3, compare);
+  b1.deleteNodeGivenDataApproach2(3, compare);
   std::cout << "Tree After Node deletion :: " << std::endl;
   b1.printLevelOrder(print);
 
-  b1.deleteNodeGivenDataApproach1(13, compare);
+  b1.deleteNodeGivenDataApproach2(13, compare);
   std::cout << "Tree After Node deletion :: " << std::endl;
   b1.printLevelOrder(print);
 
-  b1.deleteNodeGivenDataApproach1(12, compare);
+  b1.deleteNodeGivenDataApproach2(12, compare);
   std::cout << "Tree After Node deletion :: " << std::endl;
   b1.printLevelOrder(print);
 
-  b1.deleteNodeGivenDataApproach1(7, compare);
+  b1.deleteNodeGivenDataApproach2(7, compare);
   std::cout << "Tree After Node deletion :: " << std::endl;
   b1.printLevelOrder(print);
 
-  b1.deleteNodeGivenDataApproach1(4, compare);
+  b1.deleteNodeGivenDataApproach2(4, compare);
   std::cout << "Tree After Node deletion :: " << std::endl;
   b1.printLevelOrder(print);
 
