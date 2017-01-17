@@ -38,6 +38,7 @@ void process(long);
 void print(std::deque<unsigned long>& list);
 void print(std::string data, bool newLine, bool leaveNode);
 void print(unsigned int data, bool newLine, bool leaveNode);
+void print(unsigned long data, bool newLine, bool leaveNode);
 std::string interactive(long id, bool& skip, bool& cont);
 void MemoryBenchmark();
 void MemoryBenchmarkWithInsert();
@@ -312,6 +313,22 @@ void print(unsigned int data, bool newLine, bool leaveNode)
   else
     std::cout << std::endl;
 }
+
+
+void print(unsigned long data, bool newLine, bool leaveNode)
+{
+  if (leaveNode == true)
+    std::cout << "N"
+              << " ";
+  else if (newLine == false)
+    {
+      std::cout << data << " ";
+    }
+  else
+    std::cout << std::endl;
+}
+
+
 
 void process(long data)
 {

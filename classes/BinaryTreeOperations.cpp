@@ -1807,6 +1807,7 @@ void BinaryTreeOperations<T>::deleteNodeGivenDataApproach1(T data, Compare comp)
       temp = (*parent)->left->right;
       (*parent)->left->right = (*parent)->right;
       node = (*parent)->left;
+      node->id = (*parent)->id;
       delete (*parent);
       (*parent) = node;
 
@@ -1818,19 +1819,30 @@ void BinaryTreeOperations<T>::deleteNodeGivenDataApproach1(T data, Compare comp)
           temp1 = node->left->right;
           node->left->right = temp;
           temp = temp1;
+          node->left->id = 2 * (node->id);
           node = node->left;
         }
 
       if (temp != nullptr && node->left == nullptr)
         {
           node->left = temp;
+          node->left->id = 2 * (node->id);
         }
+      // Since the while loop terminates when temp == nullptr
+      // Thus, if there is a single path with no right node in it
+      // then node->id will not update (again because loop will terminate)
+
+      // This is good because it will decreases the no of iterations if subtree is heavily deep and one sided
+      // and it will decrease time complexity as well
+
+      // This is bad because one sided subtree will not have updated id  (which we can live with I guess)
     }
   else if ((*parent)->right != nullptr)
     {
       temp = (*parent)->right->left;
       (*parent)->right->left = (*parent)->left;
       node = (*parent)->right;
+      node->id = (*parent)->id;
       delete (*parent);
       (*parent) = node;
 
@@ -1842,19 +1854,32 @@ void BinaryTreeOperations<T>::deleteNodeGivenDataApproach1(T data, Compare comp)
           temp1 = node->right->left;
           node->right->left = temp;
           temp = temp1;
+          node->right->id = 2 * (node->id) + 1;
           node = node->right;
         }
 
       if (temp != nullptr && node->right == nullptr)
         {
           node->right = temp;
+          node->right->id = 2 * (node->id) + 1;
         }
+
+      // Since the while loop terminates when temp == nullptr
+      // Thus, if there is a single path with no left node in it
+      // then node->id will not update (again because loop will terminate)
+
+      // This is good because it will decreases the no of iterations if subtree is heavily deep and one sided
+      // and it will decrease time complexity as well
+
+      // This is bad because one sided subtree will not have updated id  (which we can live with I guess)
     }
   else
     {
       delete *parent;
       *parent = nullptr;
     }
+
+  this->totalNodes--;
 
 #ifdef DEBUG
   std::cout << std::endl << "Number of Loops to delete node with given data :: " << counter << std::endl;
@@ -1952,6 +1977,7 @@ void BinaryTreeOperations<T>::deleteNodeGivenDataApproach2(T data, Compare comp)
     }
   else if ((*parent)->left != *deepParent && (*parent)->right != *deepParent)
     {
+      (*deepParent)->id = (*parent)->id;
       (*deepParent)->left = (*parent)->left;
       (*deepParent)->right = (*parent)->right;
 
@@ -1961,6 +1987,7 @@ void BinaryTreeOperations<T>::deleteNodeGivenDataApproach2(T data, Compare comp)
     }
   else
     {
+      (*deepParent)->id = (*parent)->id;
       if ((*parent)->left != *deepParent)
         {
           (*deepParent)->left = (*parent)->left;
@@ -1975,6 +2002,8 @@ void BinaryTreeOperations<T>::deleteNodeGivenDataApproach2(T data, Compare comp)
       delete *parent;
       (*parent) = node;
     }
+
+  this->totalNodes--;
 
 #ifdef DEBUG
   std::cout << std::endl << "Number of Loops to delete node with given data :: " << counter << std::endl;

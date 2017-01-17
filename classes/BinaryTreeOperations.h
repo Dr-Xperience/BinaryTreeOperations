@@ -78,9 +78,35 @@ class BinaryTreeOperations : public BinaryTree<T>
   //Complexity O(N)
   T deepestNodeBFS();
   
+  /** Time Complexity
+   * Worst Case = O(N)
+   * 
+   * Considering Complete Binary Tree
+   * Average Case = O(Max(N,M)) (More like O(Max(N-(N-x),M-y), 
+   * 						where x is the id of node's parent & y is the level of node.)
+   * 
+   * Considering Complete Binary Tree
+   * Best Case = O(M)
+   * 
+   * where, N = Total Number of Nodes
+   *        M = Total Number of Levels
+   * */
   template<typename Compare>
   void deleteNodeGivenDataApproach1(T data, Compare comp);
   
+    /** Time Complexity
+   * Worst Case = O(N)
+   * 
+   * Considering Complete Binary Tree
+   * Average Case = O(N+M) (More like O(N-(N-x),M-y), 
+   * 						where x is the id of node's parent & y is the level of node.)
+   * 
+   * Considering Complete Binary Tree
+   * Best Case = O(M)
+   * 
+   * where, N = Total Number of Nodes
+   *        M = Total Number of Levels
+   * */
   template<typename Compare>
   void deleteNodeGivenDataApproach2(T data, Compare comp);
 
